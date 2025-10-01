@@ -28,7 +28,6 @@ void print_sudoku(int grid[]) {
 }
 
 
-
 bool assign_pos (int val , int x , int y , int grid[]){
 
     for (int i = 0; i < 9; i++) {
