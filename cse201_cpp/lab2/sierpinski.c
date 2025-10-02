@@ -57,17 +57,37 @@ struct Point {
 };
 
 struct Point intersection (struct Point p1 , struct Point p2 , float x) {
-    float rx = p1.y + (x - p1.x) * (p2.y - p1.y) / (p2.x - p1.x);
+    float ry = p1.y + (x - p1.x) * (p2.y - p1.y) / (p2.x - p1.x);
+    return (struct Point) {x , ry};
 }
 
-void plot_poly_sweep (char grid[nb_lines()][nb_columns()] , struct Point* p, int nrp , int x , char pixel) {
+float min(float x , float y) {
+    return x <= y ? x : y;
+}
+
+float max(float x , float y) {
+    return x < y ? y : x;
+}
+
+void plot_poly_sweep (char grid[nb_lines()][nb_columns()] , struct Point* p, int n , int x , char pixel) {
+    
+    float vlines[4 * n];
+    int top = 0;
+    
     printf("sweep %d:" , x);
 
-    for (int i = 0 , j = nrp-1; i < nrp; i++ , j = (j+1)%nrp) {
+    for (int i = 0 , j = n-1; i < n; i++ , j = (j+1)%n) {
         // printf("(%d, %d)" , j , i);
         if (min(p[i].x , p[j].x) <= x && x <= max(p[i].x , p[j].x)) {
             struct Point intersect = intersection(p[i] , p[j] , x);
+            // printf("(%f, %f)" , intersect.x , intersect.y);
+            sort_insert(vlines , top , intersect.y);
+            top++;
         }
+    }
+    for (int i = 0; i < top; i++) {
+        // printf("%f " , vlines[i]);
+        
     }
     putchar('\n');
 }
