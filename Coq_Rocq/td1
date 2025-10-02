@@ -178,14 +178,89 @@ Qed.
 
 Lemma not_ex2 :  (A -> B) -> ~B -> ~A.
 Proof.
-Admitted.
+  move => ab.
+  move => nb a.
+  apply nb.
+  apply ab.
+  apply a.
+Qed.
+(*Admitted.*)
 
 Lemma not_ex3 : ~ ~(A \/ ~A).
 Proof.
-Admitted.
+  move => a_na.
+  apply a_na.
+  right.
+    move => a.
+  apply a_na.
+  left.
+  apply a.
+Qed.
+(*Admitted.*)
 
 Lemma not_ex4 :  (A \/ B) /\ C <-> (A /\ C) \/ (B /\ C).
-Proof. Admitted.
+Proof. (*Admitted.*)
+  split.
+  move => [ab c].
+  case: ab.
+  move => a.
+  left. split. 
+    apply a.
+    apply c.
+  move => b.
+  right. split.
+    apply b. apply c.
+  move => x.
+  split.
+  case: x.
+  move => ac.
+  case: ac. move => a.
+  move => c.
+  left. apply a.
+  move => bc.
+  case: bc.
+  move => b. move => c.
+  right. apply b.
+  case: x.
+  move => ac. case: ac.
+  move => a. move=>c.
+  apply c.
+  move => bc. case: bc.
+  move => b. move => c.
+  apply c.
+Qed.
 
 Lemma not_ex5 : (A /\ B) \/ C <-> (A \/ C) /\ (B \/ C).
-Proof. Admitted.
+Proof. (*Admitted. *)
+  split.
+  move => x.
+  case: x.
+  move => ab.
+  case: ab.
+  move => a. move => b.
+  split.
+  left. apply a.
+  left. apply b.
+  move => c.
+  split.
+  right. apply c.
+  right. apply c.
+  move => x.
+  case: x.
+  move =>ac. move => bc.
+  case: ac.
+  move => a.
+  case: bc.
+  move => b.
+  left. split.
+    apply a. apply b.
+  move => c.
+  right. apply c.
+  move => c.
+  right. apply c.
+Qed.
+
+
+
+
+
