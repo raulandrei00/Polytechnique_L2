@@ -82,11 +82,12 @@ void plot_poly_sweep (char grid[nb_lines()][nb_columns()] , struct Point* p, int
             struct Point intersect = intersection(p[i] , p[j] , x);
             // printf("(%f, %f)" , intersect.x , intersect.y);
             sort_insert(vlines , top , intersect.y);
+            
             top++;
         }
     }
     for (int i = 0; i < top; i++) {
-        // printf("%f " , vlines[i]);
+        printf("%f " , vlines[i]);
         
     }
     putchar('\n');
