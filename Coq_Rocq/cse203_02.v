@@ -187,16 +187,18 @@ unfold not.
 (* Difficulty: HARD                                                     *)
 Lemma drinker_paradox (P : nat -> Prop) :
   exists x : nat, forall y : nat, P x -> P y.
-Proof. (*Admitted.*)
-  move: (excluded_middle (forall x : nat, P x)).
-  move => X.
-  destruct X as [O|nO].
-  exists 0.
-  
-  
-  
-  
+Proof.
+  apply DNE. 
+  unfold not; intro H.
 
+  destruct (excluded_middle (exists x, ~ P x)) as [[x Hx] | Hnone].
+    apply H.
+    exists x. intros y Px. contradiction.
+    apply H.
+    exists 0. intros y Px.
+    apply DNE. intro nPy. apply Hnone. exists y. exact nPy.
+Qed.
+    
 
 
 

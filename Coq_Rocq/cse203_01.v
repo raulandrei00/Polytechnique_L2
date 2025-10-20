@@ -54,19 +54,36 @@ Qed.
 
 Lemma ex0 : A -> A.
 Proof.
-Admitted.
-
+move => a.
+exact a.
+Qed.
 Lemma ex1 : forall A : Prop, A -> A.
 Proof.
-Admitted.
+  move => x.
+  move => px.
+  exact px.
+Qed.
+(*Admitted.*)
   
 Lemma ex2 : (A -> B) -> (B -> C) -> A -> C.
 Proof.
-Admitted.
+  move => x.
+  move => y.
+  move => a.
+  apply y.
+  apply x. apply a.
+Qed.
+(*Admitted.*)
 
 Lemma ex3 : (A -> B -> C) -> (B -> A) -> B -> C.
 Proof.
-Admitted.
+  move => abc. move => ba.
+  move => b.
+  apply abc.
+  apply ba.
+  apply b. apply b.
+Qed.
+(*Admitted.*)
 
 (* ====================================================================
  * With conjunctions
