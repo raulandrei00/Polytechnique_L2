@@ -151,6 +151,7 @@ def test_random_cut():
     for _ in range(ntrials):
         m = sol.MultiGraph(L_graph)
         [c, L] = sol.random_cut(m)
+        # print(c,L)
         if c == 3 and (len(L) == 1 and 'a' in L) or (len(L) == 3 and 'a' not in L):
             na += 1
         elif c == 2 and ((len(L) == 1 and 'b' in L) or (len(L) == 3 and 'b' not in L)):
