@@ -4,16 +4,10 @@ import random
 ## Question 5 ##
 
 
-def random_element(dict):
-    # TO COMPLETE
-    pass
-
-## Question 7 ##
-
-
-def random_cut(m):
-    # TO COMPLETE
-    pass
+def random_element(dict: dict):
+    norm = sum(list(dict.values()))
+    # print(random.choices(list(dict.keys()), [val/norm for val in dict.values()]))
+    return random.choices(list(dict.keys()), [val/norm for val in dict.values()])[0]
 
 
 def mincut_karger(L, p):  # p is the desired error bound
@@ -28,18 +22,34 @@ class MultiGraph:
         self.adj = {}
         self.deg = {}
         for x in L[1]:
-            if x[0] not in self.adj:
-                self.adj[x[0]] = {x[1]: x[2]}
-                self.deg[x[0]] = x[2]
+            self.add_edges(x)
+
+    def add_edges (self,edge):
+        # print(edge)
+        if edge[0] not in self.adj:
+            self.adj[edge[0]] = {edge[1]: edge[2]}
+            self.deg[edge[0]] = edge[2]
+        else:
+            if edge[1] not in self.adj[edge[0]]:
+                self.adj[edge[0]][edge[1]] = edge[2]
             else:
-                self.adj[x[0]][x[1]] = x[2]
-                self.deg[x[0]] += x[2]
-            if x[1] not in self.adj:
-                self.adj[x[1]] = {x[0]: x[2]}
-                self.deg[x[1]] = x[2]
+                self.adj[edge[0]][edge[1]] += edge[2]
+            self.deg[edge[0]] += edge[2]
+        if edge[1] not in self.adj:
+            self.adj[edge[1]] = {edge[0]: edge[2]}
+            self.deg[edge[1]] = edge[2]
+        else:
+            if edge[0] not in self.adj[edge[1]]:
+                self.adj[edge[1]][edge[0]] = edge[2]
             else:
-                self.adj[x[1]][x[0]] = x[2]
-                self.deg[x[1]] += x[2]
+                self.adj[edge[1]][edge[0]] += edge[2]
+            self.deg[edge[1]] += edge[2]
+
+    def delete_edges (self , i , j):
+        self.deg[i] -= self.adj[i][j]
+        self.deg[j] -= self.adj[i][j]
+        del self.adj[i][j]
+        del self.adj[j][i]
 
     # i is an integer between 1 and 2^n - 2, with n the number of vertices
     def subset_from_integer(self, i):
@@ -68,15 +78,49 @@ class MultiGraph:
 
     ## Question 4 ##
     def contract(self, i, j):  # contracts edge i, j (i absorbs j)
-        # TO COMPLETE
-        pass
+        assert(j in self.adj[i])
+        self.delete_edges(i,j)
+        for node in self.adj[j]:
+            self.add_edges([i , node , self.adj[j][node]])
+            # self.display()
+        for node in self.adj[j]:
+            self.deg[node] -= self.adj[j][node]
+            del self.adj[node][j]
+        del self.adj[j]
+        del self.deg[j]
 
     ## Question 6.1 ##
     def random_vertex(self):
-        # TO COMPLETE
-        pass
+        return random_element(self.deg)
 
     ## Question 6.2 ##
     def random_edge(self):
-        # TO COMPLETE
-        pass
+        first = self.random_vertex()
+        second = random_element(self.adj[first])
+        return (first , second)
+
+## Question 7 ##
+
+
+def random_cut(m: MultiGraph):
+    partition = {node : [node] for node in m.deg.keys()}
+    n = len(m.deg)
+    active = {node for node in m.deg.keys()}
+    for i in range (n-2):
+        a,b = m.random_edge()
+        partition[a]+=partition[b]
+        m.contract(a,b)
+        active.remove(b)
+        # print(partition)
+        # print(active)
+        # m.display()
+    # print(active)
+    for node in active:
+        # print(node, partition[node])
+        return (m.deg[node] , partition[node])
+
+L_graph = [4, [['a', 'b', 1], ['b', 'c', 1], ['c', 'd', 1], ['a', 'd', 2]]]
+m = MultiGraph(L_graph)
+    
+
+print(random_cut(m))
