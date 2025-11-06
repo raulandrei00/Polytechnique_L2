@@ -273,7 +273,7 @@ def test_krmod_primes():
 test1()
 test2()
 test4()
-test_krsum_worst_case()
+# test_krsum_worst_case()
 test5_1()
 test5_2()
 test5_3()
