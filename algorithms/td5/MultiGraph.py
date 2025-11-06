@@ -115,6 +115,7 @@ def random_cut(m: MultiGraph):
         # print(active)
         # m.display()
     # print(active)
+    assert(len(active) == 2)
     for node in active:
         # print(node, partition[node])
         return (m.deg[node] , partition[node])
