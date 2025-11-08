@@ -3,7 +3,7 @@ Require Import ssreflect ssrbool.
 (*Require Import Coq.Arith.Arith.*)
 
 
-Remove Hints plus_n_Sm plus_n_O : core.
+(*Remove Hints plus_n_Sm plus_n_O : core.*)
 
 (* Counting points at Belote *)
 
@@ -266,6 +266,95 @@ Qed.
 
 Lemma le_trans : forall n m p, le n m -> le m p -> le n p.
 Proof.
+induction n as [|n IH]; intros [|m] [|p]; simpl; try trivial.
+trivial.
+discriminate.
+apply IH.
+Qed.
+(*
+destruct p.
+move => nm m0.
+destruct n.
+trivial.
+simpl.
+destruct m.
+trivial. trivial.
+(*move => nm msp.*)
+destruct n.
+trivial.
+simpl.
+destruct m.
+destruct n.
+trivial. 
+simpl.
+destruct p.
+trivial.
+destruct p.
+destruct n.
+trivial.
+simpl.
+trivial.
+destruct n.
+trivial.
+simpl.
+
+
+exfalso.
+
+
+induction p.
+move => nm m0.
+destruct n.
+trivial.
+destruct m.
+rewrite nm.
+trivial.
+simpl.
+apply m0.
+(*move => nm msp.*)
+destruct n.
+trivial.
+destruct n.
+destruct p.
+trivial.
+destruct m.
+trivial.
+move => usm smssp.
+trivial.
+destruct m.
+simpl.
+destruct p.
+trivial.
+case p.
+case n.
+trivial.
+simpl. trivial.
+induction n.
+trivial.
+simpl.
+rewrite IHn.
+
+ 
+case n.
+trivial.
+induction n0.
+simpl.
+case p.
+trivial. trivial.
+case p.
+trivial.
+simpl.
+(*move => unm msp.*)
+
+
+
+
+simpl.
+destruct n.
+trivial.
+case n.
+
+
 induction n.
 simpl.
 reflexivity.
@@ -274,29 +363,81 @@ induction m.
 simpl.
 move => h1 h2.
 by rewrite h1.
+rewrite IHm.
+simpl.
+destruct m.
+
+
+
 move => a b.
 induction p.
 trivial.
 simpl.
-rewrite IHn.
 
-simpl.
-destruct m.
-destruct p.
-trivial.
-unfold le.
 
+*)
 
 Lemma le_antisym : forall n m, le n m -> le m n -> n = m.
-Proof. Admitted.
+Proof.   
+
+induction n as [|n IH]; intros [|m]; simpl; intros Hnm Hmn.
+trivial. 
+discriminate Hmn.
+discriminate Hnm.
+f_equal.
+apply IH.
+trivial. trivial.
+Qed. (*
+induction n.
+induction m.
+trivial.
+simpl.
+destruct m.
+discriminate.
+discriminate.
+(*move => m.*)
+simpl.
+destruct m.
+simpl.
+discriminate.
+simpl.
+destruct m.
+simpl.
+destruct n.
+trivial.
+discriminate.
+simpl.
+destruct n.
+simpl.
+destruct m.
+discriminate.
+*)
 
 (* 0 is the bottom element of this order *)
 Lemma le0n : forall n, le 0 n.
-Proof. Admitted.
+Proof.
+move=>n.
+destruct n.
+trivial.
+simpl.
+trivial.
+Qed.
 
 (* Let's give a specification for le *)
 Lemma leP: forall n m, le n m -> exists p, m = n + p.
-Proof. Admitted.
+Proof.
+
+  induction n as [|n IH]; intros [|m] Hle; simpl in *.
+
+  exists 0. trivial.
+  exists (S m).
+  trivial.
+  discriminate Hle.
+  destruct (IH m Hle) as [p HP].
+  exists p.
+  f_equal.
+  trivial.
+Qed.
 
 (* ==================================================================== *)
 (* THIS PART IS NOT MANDATORY *)
