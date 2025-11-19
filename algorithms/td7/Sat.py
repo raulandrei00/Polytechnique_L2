@@ -10,9 +10,17 @@ class Sat:
     self.fixed={}
 
   # Question 1
+
+  def add_clause (self, C):
+     self.clauses.append(C)
+
+  def eval_prop (self , P):
+     if P < 0:
+        return not self.values[-P]
+     else: return self.values[P]
   
   def is_clause_satisfied(self,c):
-    return any (self.values[i] for i in c)
+    return any (self.eval_prop(i) for i in c)
         
   def satisfied(self):
     return all (self.is_clause_satisfied(c) for c in self.clauses)
@@ -20,11 +28,24 @@ class Sat:
   # Questions 2 & 8
   
   def initialize(self):
-    self.values = [random.choice([True , False] for _ in range (self.nr_var+1))]
+    self.values = [random.choice([True , False]) for _ in range (self.nr_var+1)]
       
+  def flip (self , P):
+     self.values[abs(P)] ^= 1
+
   def walk_sat(self,R,N=0):
-    # TO COMPLETE
-    pass
+    self.clauses.sort(key=len)
+    n_trials = 0
+    self.initialize()
+    while ((not N) or n_trials < N):
+      n_trials += 1
+      for clause in self.clauses:
+          if not self.is_clause_satisfied(clause):
+             self.flip(clause[0])
+      if n_trials % R == 0:
+        self.initialize()
+      if self.satisfied(): break
+    
    
   ##################################################
   # PROPAGATION METHODS
@@ -33,8 +54,18 @@ class Sat:
   # Question 6
   
   def fix_values_from_1clauses(self):
-    # TO COMPLETE
-    pass
+    
+      found = False
+      for c in self.clauses:
+          if len(c) == 1:
+              lit = c[0]
+              var = abs(lit)
+              val = True if lit > 0 else False
+              if var not in self.fixed or self.fixed[var] != val:
+                  self.fixed[var] = val
+                  self.values[var] = val
+                  found = True
+      return found
 
   # Helper functions for Question 7
   
@@ -59,8 +90,14 @@ class Sat:
   # Question 7
   
   def simplify_formula_by_propagation(self):
-     # TO COMPLETE
-     pass  
+    
+    while True:
+        
+        found = self.fix_values_from_1clauses()
+        if not found:
+            break
+        self.clauses = self.simplify_clauses()
+    self.clauses = self.simplify_clauses()
 
   ##################################################
   # DISPLAY METHODS
