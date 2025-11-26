@@ -70,14 +70,21 @@ class Hex:
             return self.uf.is_connected(self.hex_to_int(1,0), self.hex_to_int(1,self.size-1))
 
     def random_turn(self):
-        '''
-            TO IMPLEMENT
-        '''
-        pass
+        (i,j) = (0,0)
+        while (self.board([i][j] != 0)):
+            (i,j) = (random.randint(1,self.size-1),random.randint(1,self.size-1))
+        self.board[i][j] = self.player
+        for n1,n2 in self.neighbours(i,j):
+            self.uf.union(self.hex_to_int(n1,n2),self.hex_to_int(i,j))
+
+
+        
 
     def random_play(self):
-        '''
-            TO IMPLEMENT
-        '''
-
-        pass
+        self.player = 1
+        no_turns = 0
+        while (not self.is_game_over()):
+            self.random_turn()
+            no_turns += 1
+            self.player = (self.player+1)%2+1
+        return no_turns / (self.size ** 2)
