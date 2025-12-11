@@ -67,7 +67,7 @@ class WG:
 
     # QUESTION 2
     def min_cycle(self):
-        return self.min_cycle_aux(0, [next(iter(self.adj))], self.adj.keys())
+        return self.min_cycle_aux(0, [next(iter(self.adj))], set(self.adj.keys()) - {next(iter(self.adj))})
 
     '''
     Question 3
@@ -83,14 +83,19 @@ class WG:
     # QUESTION 4
     def lower_bound(self,w,L,S): # returns low(L), with w the cost of L, and S the set of vertices not in L
         w_S = self.weight_min_tree(S)
-        w_start = min([cost for node, cost in self.adj[L[0]].items() if node in S])
-        w_end = min([cost for node, cost in self.adj[L[-1]].items() if node in S])
+        w_start = min([math.inf] + [cost for node, cost in self.adj[L[0]].items() if node in S])
+        w_end = min([math.inf] + [cost for node, cost in self.adj[L[-1]].items() if node in S])
+        if (len(S) == 0): return w
         return w + w_S + w_start + w_end
 
     # QUESTION 5
     def min_cycle_aux_using_bound(self,bestsofar,w,L,S):
-        if w > bestsofar: return (math.inf, [])
-        if len(S) < 1: print(len(S))
+        if self.lower_bound(w, L, S) > bestsofar: return (math.inf, [])
+        
+        
+        # if len(S) < 1: print(len(S))
+        # print(S)
+        # print(w, bestsofar)
         if len(S) == 0 and L[0] == L[-1]:
             return w,L
         elif len(S) == 0:
@@ -99,7 +104,7 @@ class WG:
         (W, L_fin) = (math.inf, L)
         for to, cost in self.adj[node].items():
             if to not in S: continue
-       
+
             W_new, L_new = self.min_cycle_aux_using_bound(bestsofar,w + cost,  L + [to], S - {to})
             if W_new < W:
                 W, L_fin = W_new, L_new
@@ -107,7 +112,7 @@ class WG:
         return W, L_fin
 
     def min_cycle_using_bound(self):
-        return self.min_cycle_aux_using_bound(math.inf, 0, [next(iter(self.adj))], self.adj.keys())
+        return self.min_cycle_aux_using_bound(math.inf, 0, [next(iter(self.adj))], set(self.adj.keys()) - {next(iter(self.adj))})
 
 #################################################################
 ## Auxiliary methods
