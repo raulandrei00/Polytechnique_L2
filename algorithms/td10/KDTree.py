@@ -5,7 +5,9 @@ from functools import cmp_to_key
 # Question 1
 
 def linear_scan(P,query):
+    
     return min(P, key=lambda point: dist(point, query))
+
 
 # Question 2
 
@@ -141,5 +143,14 @@ class KDTree:
     def NN_backtracking_search(self,query, cand = None):
         if (_dist(query,self.rootPoint) < _dist(query,cand)):
             cand = self.rootPoint
-        
+        c = self.coord
+        if (self.left is not None and cand[c] <= self.rootPoint[c]):
+            cand = self.left.NN_backtracking_search(query,cand)
+            if dist(query,cand) > abs(query[c] - self.rootPoint[c]) and self.right is not None:
+                cand = self.right.NN_backtracking_search(query,cand)
+        elif (self.right is not None):
+            cand = self.right.NN_backtracking_search(query,cand)
+            if dist(query,cand) > abs(query[c] - self.rootPoint[c]):
+                cand = self.left.NN_backtracking_search(query,cand)
+        return cand
         
