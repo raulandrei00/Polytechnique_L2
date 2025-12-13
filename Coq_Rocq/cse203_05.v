@@ -114,6 +114,7 @@ Qed.
 (* again we prove the following by going through the boolean 
    version of the lemma    *)
 Lemma lep_Snm_nm : forall n m, S n <= S m -> n <= m.
+Proof.
 move => n m l.
 apply leb_le.  
 apply (le_leb _ _ l).
@@ -144,6 +145,7 @@ Qed.
 
 
 Lemma negb_invol : forall b, ~~ ~~ b = b.
+Proof.
   by case.
 Qed.
 
@@ -209,7 +211,10 @@ Fixpoint length l :=
 Lemma app_length : forall l1 l2,
     length (app l1 l2) = length l1 + length l2.
 Proof.
-Admitted.
+  elim => [|n l1 Hl1] //=.
+  move => l2.
+  rewrite Hl1. trivial.
+Qed.
 
 (* Now the new component: we can define what it means for 
    two lists to be permutations of each other, as an 
@@ -314,25 +319,95 @@ by rewrite IH1. Qed.
    between the two lists going through 
    (cons a0 (cons a (app l1 l2)))    *)
 
+
+Lemma _perm_swap : forall a b l,
+    perm (cons a (cons b l)) (cons b (cons a l)).
+Proof.
+move => a b l.
+
+have H: cons b l = app (cons b nil) l.
+  by simpl.
+
+rewrite H.
+
+apply: perm_trans.
+  apply perm_ins.  
+
+simpl.
+apply perm_refl.
+Qed.
+
+
+
+
 Lemma perm_cons : forall a l1 l2,
                       perm l1 l2 -> perm (cons a l1) (cons a l2).
 (*start with an induction over the permutation *)
+
+Proof. 
+move => a l1 l2 p.
+elim: p => [l|b l1' l2'|l1' l2' l3' p12 IH12 p23 IH23].
+
+- by apply perm_refl.
+- 
+  apply: perm_trans.
+    apply _perm_swap.
+
+  apply: perm_trans.
+    apply: perm_trans.
+      have H: cons a (app l1' l2') = app (cons a l1') l2'.
+        by simpl.
+      rewrite H.
+      apply perm_ins. 
+    simpl.
+    apply perm_refl. apply perm_refl.
+
+- by apply: perm_trans; [apply IH12 | apply IH23].
+Qed.
+
+Lemma perm_app_same_left : forall l l1 l2,
+    perm l1 l2 -> perm (app l l1) (app l l2).
 Proof.
-Admitted.
+move => l l1 l2 p.
+elim: l => [|x l' IH] //=.
+  apply perm_cons.
+  exact IH.
+Qed.
+
+Lemma perm_rotate :
+  forall n l1 l2,
+    perm (cons n (app l1 l2)) (app l2 (cons n l1)).
+
+Proof.
+move => n l1 l2.
+elim: l1 l2 => [|x l1' IH] l2 //=.
+(* Case 1: l1 = nil *)
+- simpl.
+  have H: cons n l2 = cons n (app l2 nil) by rewrite app_nil.
+  rewrite H.
+  apply perm_ins.
+(* Case 2: l1 = cons x l1' *)
+- simpl.
+  apply: perm_trans.
+    apply _perm_swap.
+  apply: perm_trans.
+    apply perm_cons.
+    apply: IH.
+  apply: perm_trans.
+    apply perm_ins.
+  apply perm_app_same_left.
+  apply _perm_swap.
+Qed.
 
 (* This can then be proved by induction over l1 using 
     the previous lemma   *)
 Lemma perm_comapp : forall l1 l2, perm (app l1 l2)(app l2 l1).
 Proof.
-elim => [|a l1 IH1]//=.
-move => l2. case l2. rewrite app_nil. apply perm_refl. 
-move => n l. simpl. apply perm_cons.
-rewrite app_nil. apply perm_refl.
-move => l2.
-case l2. simpl. rewrite app_nil.
-apply perm_refl.
-move => n l.
 
+  elim => [| n l1' ihl1] //=.
+  move => l2.
+  rewrite app_nil. apply perm_refl.
+  move => l2. apply perm_rotate. Qed.
 
 (* With the previous property, we can prove permutation is
    symetric (and thus an equivalence relation). 
@@ -341,11 +416,27 @@ Lemma perm_sym :
   forall l1 l2,
     perm l1 l2 -> perm l2 l1.
 Proof.
-Admitted.
+move => l1 l2 p.
+elim: p => [l|a l1' l2'|l1' l2' l3' p12 IH12 p23 IH23].
 
+- by apply perm_refl.
 
+- elim: l1' => [|x l1'' IH].
 
+  + simpl. apply perm_refl.
+   
+  + simpl.
+    apply: perm_trans.
+      apply perm_cons.
+      apply IH.
+    apply: perm_trans.
+      apply _perm_swap.
+    apply perm_refl.
 
+- apply: perm_trans.
+    apply IH23.
+    apply IH12.
+Qed.
 
 (* This lemma is easy. It is a generalization of perm_cons.  
    Building on this last remark, you may see what the 
@@ -353,15 +444,21 @@ Admitted.
 Lemma perm_cons_iter : forall l1 l2 l3,
     perm l2 l3 -> perm (app l1 l2)(app l1 l3).
 Proof.
-Admitted.
+move => l1 l2 l3 p.
+elim: l1 => [|x l1' IH] //=.
+
+- simpl. apply perm_cons. exact IH.
+Qed.
 
 (* This lemma is just for making sure we have all permutations *)
 Lemma perm_swap : forall l1 l2 n m,
     perm (app l1 (cons n (cons m l2)))(app l1 (cons m (cons n l2))).
 Proof.
-Admitted.
+move => l1 l2 n m.
+apply perm_cons_iter. apply _perm_swap.
+Qed.
 
- 
+
 (* We now have enough properties to show that insertion 
   sort preserves this notion of permutations. *)
 Require Import Nat.
@@ -376,7 +473,26 @@ Fixpoint insert n l :=
 
 Lemma insert_perm : forall n l, perm (cons n l)(insert n l).
 Proof.
-Admitted.
+move => n l.
+elim: l => [|m l' IH] //=.
+(* Case 1: l = nil *)
+- apply perm_refl.
+(* Case 2: l = cons m l' *)
+- case: ifP => H.
+  (* Case 2a: n <=? m is true *)
+  + apply perm_refl.
+  (* Case 2b: n <=? m is false *)
+  + (* Goal: perm (cons n (cons m l')) (cons m (insert n l')) *)
+    apply: perm_trans.
+      (* First swap n and m *)
+      apply _perm_swap.
+    (* Now: cons m (cons n l') *)
+    apply: perm_trans.
+      apply perm_cons.
+      apply IH.
+    (* Now: cons m (insert n l') *)
+    apply perm_refl.
+Qed.
 
 Fixpoint insertion_sort l :=
   match l with
@@ -386,4 +502,31 @@ Fixpoint insertion_sort l :=
 
 Lemma sort_perm : forall l, perm l (insertion_sort l).
 Proof.
-Admitted.
+elim => [|n l IH] //=.
+
+- apply perm_refl.
+
+- 
+  apply: perm_trans.
+    apply perm_cons.
+    apply IH.
+  apply insert_perm.
+Qed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
