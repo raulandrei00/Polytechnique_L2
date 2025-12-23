@@ -18,7 +18,18 @@ B = sp.Matrix([[1, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0],
               [0, 0, 0, 1, 0, -1, -1, 0, 0, 0, 0]])
 
 print(B.rank())
+#> 10 
 nullspace = B.nullspace()
 print(nullspace)
-# X_exact = nullspace[0]  # first nullspace vector
-# print(X_exact)
+#> [Matrix([
+# [36/61],
+# [33/61],
+# [28/61],
+# [16/61],
+# [25/61],
+# [ 9/61],
+# [ 7/61],
+# [ 5/61],
+# [ 2/61],
+# [69/61],
+# [    1]])]
