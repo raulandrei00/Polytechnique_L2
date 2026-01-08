@@ -55,17 +55,20 @@ class suffix_array:
     def findR(self,S):
         l = 0
         r = self.N
+        # l >= r after O(log N) iterations
         while l < r:
             m = (l + r) // 2
+            # O(len(S)) comparisons (i.e. O(m))
             if str_compare_m(self.T[self.suffixId[m]:], S, len(S)) <= 0:
                 l = m + 1
             else:
                 r = m
-        return l
+        return l # => total complexity O(m log N)
+        # same for findL
 
     # Question 4
-    def findLR(self,S):
-        return (self.findL(S),self.findR(S))
+    def findLR(self,S): # => time complexity O(m log N) (*2)
+        return (self.findL(S),self.findR(S)) 
 
 # Question 5
 def KWIC(sa, S, c = 15):
