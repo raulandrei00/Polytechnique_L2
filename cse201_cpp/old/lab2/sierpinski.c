@@ -78,7 +78,9 @@ void plot_poly_sweep (char grid[nb_lines()][nb_columns()] , struct Point* p, int
 
     for (int i = 0 , j = n-1; i < n; i++ , j = (j+1)%n) {
         // printf("(%d, %d)" , j , i);
-        if (min(p[i].x , p[j].x) <= x && x <= max(p[i].x , p[j].x)) {
+        if (/*min(p[i].x , p[j].x) <= x && x <= max(p[i].x , p[j].x)*/
+            p[i].x < p[j].x && p[i].x <= x && x < p[j].x ||
+            p[j].x <= p[i].x && p[j].x <= x && x < p[i].x) {
             struct Point intersect = intersection(p[i] , p[j] , x);
             // printf("(%f, %f)" , intersect.x , intersect.y);
             sort_insert(vlines , top , intersect.y);
@@ -86,9 +88,9 @@ void plot_poly_sweep (char grid[nb_lines()][nb_columns()] , struct Point* p, int
             top++;
         }
     }
-    for (int i = 0; i < top; i++) {
-        printf("%f " , vlines[i]);
-        
+    for (int i = 0; i < top; i += 2) {
+        // printf("%f " , vlines[i]);
+        plot_vline(grid , x , vlines[i] , vlines[i+1] , '-');
     }
     putchar('\n');
 }
@@ -116,11 +118,11 @@ int main () {
 
     char grid[nb_lines()][nb_columns()];
     
-    // for (int i = 0; i < nb_columns(); i++){
-    //     for (int j = 0; j < nb_lines(); j++) {
-    //         plot_point(grid , i , j , ' ');
-    //     }
-    // }
+    for (int i = 0; i < nb_columns(); i++){
+        for (int j = 0; j < nb_lines(); j++) {
+            plot_point(grid , i , j , ' ');
+        }
+    }
 
     // plot_vline(grid , 7 , 1.5 , 2.5 , '|');
 
@@ -129,6 +131,6 @@ int main () {
     struct Point p[] = { { 2, 13 }, { 10, 13 }, { 30, 7 }, { 10, 1 }, { 2, 1 }, { 18, 7 } };
 
     plot_poly(grid , p , sizeof(p) / sizeof(struct Point), 'W');
-
+    grid_display(grid);
     return 0;
 }
