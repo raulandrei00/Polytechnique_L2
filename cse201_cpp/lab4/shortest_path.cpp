@@ -74,7 +74,6 @@ void shortest_path_t::compute () {
     node_t* back = head;
     base = head;
     while (true) {
-        // std::cerr << "Here\n";
 
         node_t* crt = head->findmin();
         if (crt == nullptr) break;
