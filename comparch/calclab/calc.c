@@ -1,13 +1,17 @@
+// Raul-Andrei Pop, raul-andrei.pop@polytechnique.edu
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 /*
-   name: TODO
-   userid: TODO (this is the username you use as a login)
+   name: Raul-Andrei Pop
+   userid: raul-andrei.pop (this is the username you use as a login)
 
    Question 7: Why is hexadecimal a useful display format for systems programmers?
-   TODO
+   It is much more compact than binary, and it is easier to convert between hexadecimal and binary than between decimal and binary.
+   Each hexadecimal digit corresponds to exactly 4 bits, so it is easy to read and write hexadecimal values when working with low-level 
+   data structures or memory addresses. Additionally, many programming languages and tools support hexadecimal notation, making it a convenient choice for systems programmers.
  */
 
 /*
@@ -74,7 +78,7 @@ unsigned int truncate(unsigned int x, int wordsize)
 int is_negative(unsigned int x, int wordsize)
 {
     int r = 0;
-    // TODO
+    if ((x >> (wordsize - 1)) & 1) r = 1;
     return r;
 }
 
@@ -83,7 +87,10 @@ int is_negative(unsigned int x, int wordsize)
 // e.g., 11_0000, NOT 1100_00
 void print_binary(unsigned int n, int wordsize)
 {
-    // TODO
+    for (int i = wordsize - 1; i >= 0; --i) {
+		putchar('0' + ((n >> i) & 1));
+		if (i % 4 == 0 && i > 0) putchar('_');
+	}
 }
 
 // Convert a string of '0's and '1's into an unsigned integer value.
@@ -92,7 +99,14 @@ void print_binary(unsigned int n, int wordsize)
 unsigned int from_binary_string(const char* str)
 {
     int r = 0;
-    // TODO
+    for (; *str; ++str) {
+		if (*str == '_') continue;
+		if (*str != '0' && *str != '1') {
+			illegal_value_warning();
+			return 0;
+		}
+		r = (r << 1) + (*str - '0');
+	}
     return r;
 }
 
@@ -101,7 +115,12 @@ unsigned int from_binary_string(const char* str)
 // least-significant digit), e.g., f0_2ea7, NOT f02e_a7.
 void print_hexadecimal(unsigned int n, int wordsize)
 {
-    // TODO
+    int num_digits = (wordsize + 3) / 4; // 4 bits per hex digit
+	for (int i = num_digits - 1; i >= 0; --i) {
+		int digit = (n >> (4 * i)) & 0xF;
+		putchar("0123456789abcdef"[digit]);
+		if (i % 4 == 0 && i > 0) putchar('_');
+	}
 }
 
 // Convert a string of (upper-case or lower-case) hexadecimal digits into
@@ -111,7 +130,21 @@ void print_hexadecimal(unsigned int n, int wordsize)
 unsigned int from_hexadecimal_string(const char* str)
 {
     int r = 0;
-    // TODO
+    for (; *str; ++str) {
+		if (*str == '_') continue;
+		int digit;
+		if ('0' <= *str && *str <= '9') {
+			digit = *str - '0';
+		} else if ('a' <= *str && *str <= 'f') {
+			digit = *str - 'a' + 10;
+		} else if ('A' <= *str && *str <= 'F') {
+			digit = *str - 'A' + 10;
+		} else {
+			illegal_value_warning();
+			return 0;
+		}
+		r = (r << 4) + digit;
+	}
     return r;
 }
 
@@ -182,6 +215,7 @@ unsigned int from_decimal_string(const char* str)
     return (unsigned int)r;
 }
 
+
 // Assume that the processor just calculated r = x + y in wordsize bits,
 // print the value (0 or 1) of the four condition codes. See 3.6.1 of
 // Bryant and O'Halloran:
@@ -199,7 +233,24 @@ void print_condition_codes(enum operation last_op,
 			   unsigned int x, unsigned int y, unsigned int r,
 			   int wordsize)
 {
-    // TODO
+	if (last_op == ADD && truncate(r, wordsize) < truncate(x, wordsize) && truncate(r, wordsize) < truncate(y, wordsize)) {
+		puts("CF=1");
+	}
+	else puts("CF=0");
+	if (truncate(r, wordsize) == 0) {
+		puts("ZF=1");
+	}
+	else puts("ZF=0");
+	if (is_negative(r, wordsize)) {
+		puts("SF=1");
+	}
+	else puts("SF=0");
+	if (last_op == ADD && is_negative(x, wordsize) == is_negative(y, wordsize) && is_negative(x, wordsize) != is_negative(r, wordsize)) {
+		puts("OF=1");
+	}
+	else puts("OF=0");
+
+	
 }
 
 // parse an integer
