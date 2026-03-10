@@ -2,7 +2,9 @@
  * INF559 Data Lab 
  * 
  * <Please put your name and userid here>
- * raul-andrei.pop Raul-Andrei Pop
+ * Octavian Vasile
+ * octavian.vasile
+ * 
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -168,7 +170,7 @@ int func1(int x) {
  *   Rating: 1
  */
 int func2(int x, int y) {
-  return (~x) & (~y);
+  return ~x & ~y;
 }
 /* 
  * func3 - x & ~y using only ^, &, and |
@@ -188,31 +190,31 @@ int func3(int x, int y) {
  *   Rating: 2
  */
 int func4(int x) {
-  int mask = ~(((1 << 31) >> 16) << 1);
-  int X = (x >> 16) & mask;
-  return (x << 16) | X;
+  int mask = 0xFF;
+  mask = mask | (mask << 8);
+  return (x << 16) | ((x >> 16) & mask);
 }
 /* 
  * func5 - return an integer where all the bits have the same value of the least significant bit of x
  *   Example: func5(5) = 0xFFFFFFFF, func5(6) = 0x00000000
- *   Legal ops: ! ~ & ^ | + << >> -1 == 0b11111111 11111111 11111111 11111111 == ~0
- *   Max ops: 5 ~1 == 0b11111111 11111111 11111111 11111110 == -2
+ *   Legal ops: ! ~ & ^ | + << >>
+ *   Max ops: 5
  *   Rating: 2
  */
 int func5(int x) {
-  return (~(x & 1)) + 1;
+  return ~(x & 1) + 1;
 }
 /* 
  * func6 - return 1 if all the even-numbered bits (bit 0 is the least significant bit) in the input word are set to 1
  *   Examples func6(0xFFFFFFFE) = 0, func6(0x55555555) = 1
- *   Legal ops: ! ~ & ^ | + << >> ~ (b1 ^ b2)
+ *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 12
  *   Rating: 2
  */
 int func6(int x) {
-  int mask = 0x55; // 0b01010101
-  mask = (mask << 8) | mask; // 0b0101010101010101
-  mask = (mask << 16) | mask; // 0b01010101010101010101010101010101 == 0x55555555
+  int mask = 0x55;
+  mask = mask | (mask << 8);
+  mask = mask | (mask << 16);
   return !((x & mask) ^ mask);
 }
 /* 
@@ -245,7 +247,8 @@ int func8(void) {
  *   Rating: 1
  */
 int func9(int x) {
-  return  !(~(x ^ (x + 1)) | !(x+1)) ;
+  int y = x + 1;
+  return !(~y ^ x) & !!y;
 }
 /* 
  * func10 - return -x 
@@ -266,9 +269,12 @@ int func10(int x) {
  *   Rating: 3
  */
 int func11(int x, int y) {
-    int sum = x + y;
-    int overflow = (~(x ^ y) & (x ^ sum)) >> 31;
-    return !overflow;
+  int sum = x + y;
+  int xs = x >> 31;
+  int ys = y >> 31;
+  int ss = sum >> 31;
+  int err = ~(xs ^ ys) & (xs ^ ss);
+  return !err;
 }
 /* 
  * func12 - if x > y  then return 1, else return 0 
@@ -278,14 +284,12 @@ int func11(int x, int y) {
  *   Rating: 3
  */
 int func12(int x, int y) {
-    int sx = x >> 31;
-    int sy = y >> 31;
-    int diff = x + (~y + 1);
-    int sd = diff >> 31;
-
-    int signDiff = sx ^ sy;
-
-    return (signDiff & !sx) | (!signDiff & !sd & !!diff);
+  int xs = (x >> 31) & 1;
+  int ys = (y >> 31) & 1;
+  int dif = x + (~y + 1);
+  int difs = (dif >> 31) & 1;
+  int ok = xs ^ ys;
+  return (ok & (!xs)) | ((!ok) & (!difs & !!dif));
 }
 /*
  * func13 - adds two numbers but when positive overflow occurs, returns
@@ -298,14 +302,14 @@ int func12(int x, int y) {
  *   Rating: 4
  */
 int func13(int x, int y) {
-    int sum = x + y;
-    int tmin = 1 << 31;
-    int tmax = ~tmin;
-
-    int overflow = (~(x ^ y) & (x ^ sum)) >> 31;
-    int sx = x >> 31;
-
-    int sat = (sx & tmin) | (~sx & tmax);
-
-    return (overflow & sat) | (~overflow & sum);
+  int sum = x + y;
+  int xs = x >> 31;
+  int ys = y >> 31;
+  int ss = sum >> 31;
+  int pos_ovf = ~(xs | ys) & ss;
+  int neg_ovf = xs & ys & ~ss;
+  int intmax = ~(1 << 31);
+  int intmin = 1 << 31;
+  return (pos_ovf & intmax) | (neg_ovf & intmin) | (~(pos_ovf | neg_ovf) & sum);
 }
+
