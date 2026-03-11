@@ -1,0 +1,16 @@
+  mrmovq  x, %rax      # load x in eax
+  irmovq  $10, %rbx    # load 10 in ebx
+  subq    %rax, %rbx   # do x-10
+  je      Ltrue        # if x-10 = 0 jump Ltrue
+  irmovq  $1, %rbx     # executed if false
+  subq    %rbx, %rax          
+  jmp     Lend         # done else, jump to Lend
+Ltrue:
+  irmovq  $1, %rbx     # executed if true
+  addq    %rbx, %rax
+Lend:
+  rmmovq  %rax, x      # store result in x
+  halt
+
+.pos 256
+x: .quad 0x0a

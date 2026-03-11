@@ -1,0 +1,16 @@
+0x000: 500f0001000000000000 |   mrmovq  x, %rax      # load x in eax
+0x00a: 30f30a00000000000000 |   irmovq  $10, %rbx    # load 10 in ebx
+0x014: 6103                 |   subq    %rax, %rbx   # do x-10
+0x016: 733400000000000000   |   je      Ltrue        # if x-10 = 0 jump Ltrue
+0x01f: 30f30100000000000000 |   irmovq  $1, %rbx     # executed if false
+0x029: 6130                 |   subq    %rbx, %rax          
+0x02b: 704000000000000000   |   jmp     Lend         # done else, jump to Lend
+0x034:                      | Ltrue:
+0x034: 30f30100000000000000 |   irmovq  $1, %rbx     # executed if true
+0x03e: 6030                 |   addq    %rbx, %rax
+0x040:                      | Lend:
+0x040: 400f0001000000000000 |   rmmovq  %rax, x      # store result in x
+0x04a: 00                   |   halt
+                            | 
+0x100:                      | .pos 256
+0x100: 0a00000000000000     | x: .quad 0x0a

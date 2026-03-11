@@ -1,0 +1,12 @@
+  mrmovq y, %rax           # read y into %rax
+  mrmovq x, %rbx           # read x into %rbx
+  irmovq $4, %rcx          # load 4 into %rcx
+  addq   %rax, %rcx        # %rcx = %rcx + %rax
+  addq   %rbx, %rcx        # %rcx = %rcx + %rbx
+  rmmovq %rcx, x           # store result at x
+  halt
+
+.pos 256
+x: .quad  0x1              # x initialised with 1
+y: .quad  0x2              # y initialised with 2
+ 

@@ -1,0 +1,19 @@
+  irmovq   $0, %rax    # use rax as temp for t
+  irmovq   $-1, %rbx  
+  mrmovq   y, %rcx     # read y in rcx
+  mrmovq   x, %rdx     # read x in rdx
+Lloop:
+  irmovq   $0, %rsi   
+  subq     %rcx, %rsi  # y-0
+  je       Lend        # if y-0=0, jump Lend
+  addq     %rdx, %rax  # %rax = %rax + x (%edx)
+  addq     %rbx, %rcx  # %rcx = %rcx - 1 
+  jmp Lloop              # goto Lloop  
+Lend: 
+  rmmovq   %rax, t     # store %rax in t
+  halt
+
+.pos 256
+t: .quad 0
+x: .quad 4
+y: .quad 3

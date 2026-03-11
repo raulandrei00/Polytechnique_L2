@@ -1,0 +1,11 @@
+0x000: 500f0801000000000000 |   mrmovq y, %rax           # read y into %rax
+0x00a: 503f0001000000000000 |   mrmovq x, %rbx           # read x into %rbx
+0x014: 30f10400000000000000 |   irmovq $4, %rcx          # load 4 into %rcx
+0x01e: 6001                 |   addq   %rax, %rcx        # %rcx = %rcx + %rax
+0x020: 6031                 |   addq   %rbx, %rcx        # %rcx = %rcx + %rbx
+0x022: 401f0001000000000000 |   rmmovq %rcx, x           # store result at x
+0x02c: 00                   |   halt
+                            | 
+0x100:                      | .pos 256
+0x100: 0100000000000000     | x: .quad  0x1              # x initialised with 1
+0x108: 0200000000000000     | y: .quad  0x2              # y initialised with 2

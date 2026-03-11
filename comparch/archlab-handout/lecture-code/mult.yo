@@ -1,0 +1,19 @@
+0x000: 30f00000000000000000 |   irmovq   $0, %rax    # use rax as temp for t
+0x00a: 30f3ffffffffffffffff |   irmovq   $-1, %rbx  
+0x014: 501f1001000000000000 |   mrmovq   y, %rcx     # read y in rcx
+0x01e: 502f0801000000000000 |   mrmovq   x, %rdx     # read x in rdx
+0x028:                      | Lloop:
+0x028: 30f60000000000000000 |   irmovq   $0, %rsi   
+0x032: 6116                 |   subq     %rcx, %rsi  # y-0
+0x034: 734a00000000000000   |   je       Lend        # if y-0=0, jump Lend
+0x03d: 6020                 |   addq     %rdx, %rax  # %rax = %rax + x (%edx)
+0x03f: 6031                 |   addq     %rbx, %rcx  # %rcx = %rcx - 1 
+0x041: 702800000000000000   |   jmp Lloop              # goto Lloop  
+0x04a:                      | Lend: 
+0x04a: 400f0001000000000000 |   rmmovq   %rax, t     # store %rax in t
+0x054: 00                   |   halt
+                            | 
+0x100:                      | .pos 256
+0x100: 0000000000000000     | t: .quad 0
+0x108: 0400000000000000     | x: .quad 4
+0x110: 0300000000000000     | y: .quad 3
