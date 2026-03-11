@@ -1,0 +1,22 @@
+                            | # flags : ZF SF OF
+                            | # jumps : jge jle je jg jl jmp jne
+                            | 
+0x000: 500f0001000000000000 |   mrmovq x, %rax
+0x00a: 30f10400000000000000 |   irmovq $4, %rcx
+0x014: 6101                 |   subq %rax, %rcx
+0x016: 722800000000000000   |   jl Bigx
+                            |   
+0x01f: 703400000000000000   |   jmp Endif
+                            | 
+0x028:                      | Bigx:
+                            | 
+0x028: 30f10300000000000000 |   irmovq $3, %rcx
+0x032: 6010                 |   addq %rcx, %rax
+                            | 
+                            | 
+0x034:                      | Endif:
+0x034: 400f0801000000000000 |   rmmovq %rax, y
+                            | 
+0x100:                      | .pos 0x100
+0x100: 0b00000000000000     | x: .quad 0x0b
+0x108: 0000000000000000     | y: .quad 0x00

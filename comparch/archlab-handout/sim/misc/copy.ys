@@ -1,0 +1,45 @@
+
+  irmovq $1, %rdx # decrement register 
+  irmovq $8, %rsp
+  
+  irmovq sum, %r8
+  mrmovq 0(%r8), %rbx
+  
+  irmovq src, %rax
+  
+  irmovq len, %r10
+  mrmovq 0(%r10), %rsi
+  
+  irmovq dest, %rbp
+
+Lloop:
+  mrmovq 0(%rax), %rcx
+  addq %rsp, %rax
+
+  rmmovq %rcx, 0(%rbp)
+  addq %rsp, %rbp
+
+  addq %rcx, %rbx  
+  subq %rdx, %rsi
+  jne Lloop
+  rmmovq %rbx, 0(%r8)
+
+
+.pos 0x200
+.align 8
+# Source block
+src:
+        .quad 0x00a
+        .quad 0x0b0
+        .quad 0xc00
+
+# Destination block
+dest:
+        .quad 0x111
+        .quad 0x222
+        .quad 0x333
+
+len:
+        .quad 3
+sum:
+        .quad 0

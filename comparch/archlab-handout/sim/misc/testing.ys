@@ -1,0 +1,22 @@
+
+  mrmovq x, %rax
+  irmovq $2, %rbx
+
+  subq %rbx, %rax 
+  jl Here
+
+  irmovq $2, %rcx
+  rmmovq %rcx, y
+
+  jmp Endif
+
+Here:
+  irmovq $1, %rcx
+  rmmovq %rcx, y
+
+Endif:
+
+
+.pos 0x150 
+x: .quad 5
+y: .quad 0x0

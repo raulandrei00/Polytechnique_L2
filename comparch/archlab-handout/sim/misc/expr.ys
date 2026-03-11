@@ -1,0 +1,22 @@
+# flags : ZF SF OF
+# jumps : jge jle je jg jl jmp jne
+
+  mrmovq x, %rax
+  irmovq $4, %rcx
+  subq %rax, %rcx
+  jl Bigx
+  
+  jmp Endif
+
+Bigx:
+
+  irmovq $3, %rcx
+  addq %rcx, %rax
+
+
+Endif:
+  rmmovq %rax, y
+
+.pos 0x100
+x: .quad 0x0b
+y: .quad 0x00
