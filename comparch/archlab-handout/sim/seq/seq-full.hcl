@@ -2,6 +2,16 @@
 # name: Raul-Andrei POP
 # ID: raul-andrei.pop
 
+# OPERATION SEQUENCE FOR IIADDQ
+# icode:ifun <- M1[PC]
+# rA:rB <- M1[PC+1]
+# valC <- M1[PC+2]
+# valP <- PC + 10
+# valB <- R[rb]
+# valF <- valC + valB
+# R[rb] <- valF
+# PC <- valP
+
 ####################################################################
 #  HCL Description of Control for Single Cycle Y86-64 Processor SEQ   #
 #  Copyright (C) Randal E. Bryant, David R. O'Hallaron, 2010       #
