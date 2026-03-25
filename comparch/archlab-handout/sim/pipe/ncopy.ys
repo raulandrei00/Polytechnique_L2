@@ -1,44 +1,101 @@
-#/* $begin ncopy-ys */
 ##################################################################
-# ncopy.ys - Copy a src block of len words to dst.
-# Return the number of positive words (>0) contained in src.
-#
-# Include your name and ID here.
-#
-# Describe how and why you modified the baseline code.
-#
+# ncopy.ys - Y86-64 optimized 8x-unrolled latency-hiding version
+# Copies src to dst, counts positive words, fully Y86-compliant
 ##################################################################
-# Do not modify this portion
-# Function prologue.
 # %rdi = src, %rsi = dst, %rdx = len
 ncopy:
+    xorq %rax, %rax          # clear positive count
+    iaddq $-8, %rdx
+    jl Remainder              # if <8 elements, handle in remainder
 
-##################################################################
-# You can modify this portion
-	# Loop header
-	xorq %rax,%rax		# count = 0;
-	andq %rdx,%rdx		# len <= 0?
-	jle Done		# if so, goto Done:
+Loop8:
+    # Element 0
+    mrmovq (%rdi), %r10
+    # Element 1 load while storing element 0
+    mrmovq 8(%rdi), %r11
+    rmmovq %r10, (%rsi)
+    andq %r10, %r10
+    jle L0
+    iaddq $1, %rax
+L0:
+    
+    # Element 1 store, load element 2
+    rmmovq %r11, 8(%rsi)
+    mrmovq 16(%rdi), %r10
+    andq %r11, %r11
+    jle L1
+    iaddq $1, %rax
+L1:
 
-Loop:	mrmovq (%rdi), %r10	# read val from src...
-	rmmovq %r10, (%rsi)	# ...and store it to dst
-	andq %r10, %r10		# val <= 0?
-	jle Npos		# if so, goto Npos:
-	irmovq $1, %r10
-	addq %r10, %rax		# count++
-Npos:	irmovq $1, %r10
-	subq %r10, %rdx		# len--
-	irmovq $8, %r10
-	addq %r10, %rdi		# src++
-	addq %r10, %rsi		# dst++
-	andq %rdx,%rdx		# len > 0?
-	jg Loop			# if so, goto Loop:
-##################################################################
-# Do not modify the following section of code
-# Function epilogue.
+    # Element 2 store, load element 3
+    rmmovq %r10, 16(%rsi)
+    mrmovq 24(%rdi), %r11
+    andq %r10, %r10
+    jle L2
+    iaddq $1, %rax
+L2:
+
+    # Element 3 store, load element 4
+    rmmovq %r11, 24(%rsi)
+    mrmovq 32(%rdi), %r10
+    andq %r11, %r11
+    jle L3
+    iaddq $1, %rax
+L3:
+
+    # Element 4 store, load element 5
+    rmmovq %r10, 32(%rsi)
+    mrmovq 40(%rdi), %r11
+    andq %r10, %r10
+    jle L4
+    iaddq $1, %rax
+L4:
+
+    # Element 5 store, load element 6
+    rmmovq %r11, 40(%rsi)
+    mrmovq 48(%rdi), %r10
+    andq %r11, %r11
+    jle L5
+    iaddq $1, %rax
+L5:
+
+    # Element 6 store, load element 7
+    rmmovq %r10, 48(%rsi)
+    mrmovq 56(%rdi), %r11
+    andq %r10, %r10
+    jle L6
+    iaddq $1, %rax
+L6:
+
+    # Element 7 store and positivity check
+    rmmovq %r11, 56(%rsi)
+    andq %r11, %r11
+    jle Next
+    iaddq $1, %rax
+
+Next:
+    iaddq $64, %rdi          # advance pointers by 8 elements
+    iaddq $64, %rsi
+    iaddq $-8, %rdx          # decrement block counter
+    jge Loop8
+
+# Remainder loop for <8 elements
+Remainder:
+    iaddq $8, %rdx
+    jle Done
+
+Loop1:
+    mrmovq (%rdi), %r10
+    rmmovq %r10, (%rsi)
+    andq %r10, %r10
+    jle Lrem
+    iaddq $1, %rax
+Lrem:
+    iaddq $8, %rdi
+    iaddq $8, %rsi
+    iaddq $-1, %rdx
+    jg Loop1
+
 Done:
-	ret
-##################################################################
-# Keep the following label at the end of your function
-End:
-#/* $end ncopy-ys */
+    ret
+

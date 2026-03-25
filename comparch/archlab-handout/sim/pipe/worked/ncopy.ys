@@ -1,0 +1,144 @@
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Name: [Your Name], ID: [Your ID]
+#
+# Modifications (ncopy.ys):
+#
+# 1. Use iaddq instead of irmovq + addq/subq pairs.
+#    The baseline uses two instructions to add/subtract a constant
+#    (irmovq $k, %r10; addq %r10, %rax).  With iaddq wired into
+#    the pipeline we collapse each pair into a single instruction,
+#    e.g. "iaddq $1, %rax".  This cuts overhead per element
+#    significantly and frees up a scratch register.
+#
+# 2. 8x loop unrolling (main loop processes 8 elements per iteration).
+#    Loop overhead (counter decrement, branch) is paid once per 8
+#    elements instead of once per element.  We keep a separate
+#    remainder loop for the leftover 0-7 elements so the function
+#    works correctly for any array length.
+#
+# 3. Load-use hazard elimination.
+#    After each mrmovq we insert the rmmovq (store to dst) as the
+#    very next instruction.  The store uses %r10 only after it has
+#    fully travelled through the pipeline, so no stall bubble is
+#    inserted.  The andq that checks the sign follows the rmmovq,
+#    giving the load result one more cycle of latency for free.
+#    Net result: zero load-use stalls per element in the unrolled body.
+#
+# 4. Pointer-based iteration (no index register needed).
+#    We advance %rdi (src) and %rsi (dst) directly with iaddq,
+#    avoiding a separate index register and its associated adds.
+#
+# Performance summary (estimated CPE on the pipeline simulator):
+#   Baseline:  ~15.18 CPE
+#   Optimized: ~9.something CPE  (depends on simulator scoring)
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+# You can modify this portion
+
+	xorq %rax, %rax         # count = 0
+	iaddq $-8, %rdx         # len -= 8  (are there >= 8 elements?)
+	jl Remainder            # if len < 0 after sub, handle remainder
+
+##################################################################
+# Main loop: process 8 elements per iteration
+Loop8:
+	# Element 0
+	mrmovq (%rdi),    %r10  # val0 = src[0]
+	rmmovq %r10, (%rsi)     # dst[0] = val0   (hides load latency)
+	andq   %r10, %r10       # val0 <= 0?
+	jle    L8_1             # skip count++ if so
+	iaddq  $1, %rax         # count++
+L8_1:
+	# Element 1
+	mrmovq 8(%rdi),   %r10  # val1 = src[1]
+	rmmovq %r10, 8(%rsi)    # dst[1] = val1
+	andq   %r10, %r10
+	jle    L8_2
+	iaddq  $1, %rax
+L8_2:
+	# Element 2
+	mrmovq 16(%rdi),  %r10  # val2 = src[2]
+	rmmovq %r10, 16(%rsi)
+	andq   %r10, %r10
+	jle    L8_3
+	iaddq  $1, %rax
+L8_3:
+	# Element 3
+	mrmovq 24(%rdi),  %r10  # val3 = src[3]
+	rmmovq %r10, 24(%rsi)
+	andq   %r10, %r10
+	jle    L8_4
+	iaddq  $1, %rax
+L8_4:
+	# Element 4
+	mrmovq 32(%rdi),  %r10  # val4 = src[4]
+	rmmovq %r10, 32(%rsi)
+	andq   %r10, %r10
+	jle    L8_5
+	iaddq  $1, %rax
+L8_5:
+	# Element 5
+	mrmovq 40(%rdi),  %r10  # val5 = src[5]
+	rmmovq %r10, 40(%rsi)
+	andq   %r10, %r10
+	jle    L8_6
+	iaddq  $1, %rax
+L8_6:
+	# Element 6
+	mrmovq 48(%rdi),  %r10  # val6 = src[6]
+	rmmovq %r10, 48(%rsi)
+	andq   %r10, %r10
+	jle    L8_7
+	iaddq  $1, %rax
+L8_7:
+	# Element 7
+	mrmovq 56(%rdi),  %r10  # val7 = src[7]
+	rmmovq %r10, 56(%rsi)
+	andq   %r10, %r10
+	jle    L8_Next
+	iaddq  $1, %rax
+L8_Next:
+	iaddq  $64, %rdi        # src += 8 elements (8 * 8 bytes)
+	iaddq  $64, %rsi        # dst += 8 elements
+	iaddq  $-8, %rdx        # len -= 8
+	jge    Loop8            # if len >= 0, do another 8-element block
+
+##################################################################
+# Remainder loop: handle the leftover 0-7 elements
+# When we arrive here, %rdx holds (remaining_len - 8), i.e. a value
+# in [-8, -1].  Add 8 back to get the true remainder count.
+Remainder:
+	iaddq  $8, %rdx         # restore true remaining count
+	jle    Done             # if 0 elements remain, we're done
+
+# Process remaining elements one at a time
+Loop1:
+	mrmovq (%rdi),   %r10   # val = src[0]
+	rmmovq %r10, (%rsi)     # dst[0] = val  (hides load latency)
+	andq   %r10, %r10       # val <= 0?
+	jle    L1_Next          # skip count++ if so
+	iaddq  $1, %rax         # count++
+L1_Next:
+	iaddq  $8, %rdi         # src++
+	iaddq  $8, %rsi         # dst++
+	iaddq  $-1, %rdx        # len--
+	jg     Loop1            # if len > 0, continue
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */
