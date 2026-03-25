@@ -22,7 +22,7 @@ $totalpoints = 60;
 # What CPE is required to get full credit?
 $fullcpe = 7.5;
 # What CPE is required to get nonzero credit:
-$threshcpe = 10.5;
+$threshcpe = 13.5;
 
 
 
@@ -107,4 +107,3 @@ if ($acpe <= $fullcpe) {
     $score = $totalpoints * ($threshcpe - $acpe)/($threshcpe - $fullcpe);
 }
 printf "Score\t%.1f/%.1f\n", $score, $totalpoints;
-

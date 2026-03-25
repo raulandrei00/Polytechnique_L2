@@ -1,0 +1,124 @@
+##################################################################
+# ncopy.ys - Y86-64 optimized for average CPE (length 1–64)
+# 8x unrolled with 4 counters, latency-hiding
+##################################################################
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+    xorq %rax, %rax          # total positive count
+    xorq %r8, %r8            # counter 0
+    xorq %r9, %r9            # counter 1
+    xorq %r10, %r10          # counter 2
+    xorq %r11, %r11          # counter 3
+
+    # number of 8-element blocks
+    rrmovq %rdx, %rcx
+    
+    xorq %rcx, %rcx       # rcx = 0, will hold block count
+LoopDiv:
+    iaddq $-8, %rdx    # decrement len by 8
+    jlt DoneDiv        # if negative, we’re done
+    iaddq $1, %rcx     # increment block count
+    jmp LoopDiv
+DoneDiv:
+    iaddq $8, %rdx     # restore remainder (<8)
+
+    andq $7, %rdx             # rdx = remainder (<8)
+    jle Remainder             # if no full blocks
+
+Loop8:
+    # Element 0 → %r8
+    mrmovq (%rdi), %r12
+    mrmovq 8(%rdi), %r13       # preload element 1
+    rmmovq %r12, (%rsi)
+    andq %r12, %r12
+    jle L0
+    iaddq $1, %r8
+L0:
+
+    # Element 1 → %r9
+    rmmovq %r13, 8(%rsi)
+    mrmovq 16(%rdi), %r12      # preload element 2
+    andq %r13, %r13
+    jle L1
+    iaddq $1, %r9
+L1:
+
+    # Element 2 → %r10
+    rmmovq %r12, 16(%rsi)
+    mrmovq 24(%rdi), %r13      # preload element 3
+    andq %r12, %r12
+    jle L2
+    iaddq $1, %r10
+L2:
+
+    # Element 3 → %r11
+    rmmovq %r13, 24(%rsi)
+    mrmovq 32(%rdi), %r12      # preload element 4
+    andq %r13, %r13
+    jle L3
+    iaddq $1, %r11
+L3:
+
+    # Element 4 → %r8
+    rmmovq %r12, 32(%rsi)
+    mrmovq 40(%rdi), %r13      # preload element 5
+    andq %r12, %r12
+    jle L4
+    iaddq $1, %r8
+L4:
+
+    # Element 5 → %r9
+    rmmovq %r13, 40(%rsi)
+    mrmovq 48(%rdi), %r12      # preload element 6
+    andq %r13, %r13
+    jle L5
+    iaddq $1, %r9
+L5:
+
+    # Element 6 → %r10
+    rmmovq %r12, 48(%rsi)
+    mrmovq 56(%rdi), %r13      # preload element 7
+    andq %r12, %r12
+    jle L6
+    iaddq $1, %r10
+L6:
+
+    # Element 7 → %r11
+    rmmovq %r13, 56(%rsi)
+    andq %r13, %r13
+    jle L7
+    iaddq $1, %r11
+L7:
+
+    # advance pointers
+    iaddq $64, %rdi
+    iaddq $64, %rsi
+    iaddq $-1, %rcx
+    jg Loop8
+
+    # add counters to total
+    addq %r8, %rax
+    addq %r9, %rax
+    addq %r10, %rax
+    addq %r11, %rax
+
+# Remainder loop (<8 elements)
+Remainder:
+    andq %rdx, %rdx
+    jle Done
+
+LoopRem:
+    mrmovq (%rdi), %r12
+    rmmovq %r12, (%rsi)
+    andq %r12, %r12
+    jle Lrem
+    iaddq $1, %rax
+Lrem:
+    iaddq $8, %rdi
+    iaddq $8, %rsi
+    iaddq $-1, %rdx
+    jg LoopRem
+
+Done:
+    ret
+

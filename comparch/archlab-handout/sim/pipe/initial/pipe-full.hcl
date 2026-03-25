@@ -1,32 +1,13 @@
 #/* $begin pipe-all-hcl */
 ####################################################################
-#    HCL Description of Control for Pipelined Y86-64 Processor    #
-#    Copyright (C) Randal E. Bryant, David R. O'Hallaron, 2014    #
+#    HCL Description of Control for Pipelined Y86-64 Processor     #
+#    Copyright (C) Randal E. Bryant, David R. O'Hallaron, 2014     #
 ####################################################################
 
-# Name: [Your Name], ID: [Your ID]
-#
-# Modifications (pipe-full.hcl):
-#   Added full pipeline support for the iaddq instruction.
-#   iaddq $valC, rB computes rB + valC -> rB and sets condition codes.
-#   This acts like an OPq but with an immediate instead of a register
-#   source, saving an irmovq each time a constant is added to a register.
-#
-#   Changes by stage:
-#   Fetch:   IIADDQ added to instr_valid, need_regids, and need_valC.
-#            It uses one register byte (rB only; rA is RNONE) and a
-#            full 8-byte immediate, so it is 10 bytes total.
-#   Decode:  srcB = rB  (register operand to read)
-#            dstE = rB  (register to write result back)
-#            srcA = RNONE (no register source A; immediate used instead)
-#   Execute: aluA = valC  (the immediate is operand A)
-#            aluB = valB  (rB's value is operand B)
-#            alufun = ALUADD (default, no change needed)
-#            set_cc now includes IIADDQ so flags are updated
-#   Memory:  No memory access; no changes required.
-#   Pipeline control: No new hazard cases; existing forwarding and
-#            stall logic handles iaddq correctly because it only
-#            uses srcB/dstE, exactly like the register-B side of OPq.
+## Your task is to implement the iaddq instruction
+## The file contains a declaration of the icodes
+## for iaddq (IIADDQ)
+## Your job is to add the rest of the logic to make it work
 
 ####################################################################
 #    C Include's.  Don't alter these                               #
@@ -41,7 +22,7 @@ quote 'int sim_main(int argc, char *argv[]);'
 quote 'int main(int argc, char *argv[]){return sim_main(argc,argv);}'
 
 ####################################################################
-#    Declarations.  Do not change/remove/delete any of these      #
+#    Declarations.  Do not change/remove/delete any of these       #
 ####################################################################
 
 ##### Symbolic representation of Y86-64 Instruction Codes #############
@@ -175,10 +156,9 @@ word f_ifun = [
 ];
 
 # Is instruction valid?
-# MODIFIED: Added IIADDQ
 bool instr_valid = f_icode in 
 	{ INOP, IHALT, IRRMOVQ, IIRMOVQ, IRMMOVQ, IMRMOVQ,
-	  IOPQ, IJXX, ICALL, IRET, IPUSHQ, IPOPQ, IIADDQ };
+	  IOPQ, IJXX, ICALL, IRET, IPUSHQ, IPOPQ };
 
 # Determine status code for fetched instruction
 word f_stat = [
@@ -189,15 +169,13 @@ word f_stat = [
 ];
 
 # Does fetched instruction require a regid byte?
-# MODIFIED: iaddq encodes rB in the register byte
 bool need_regids =
 	f_icode in { IRRMOVQ, IOPQ, IPUSHQ, IPOPQ, 
-		     IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ };
+		     IIRMOVQ, IRMMOVQ, IMRMOVQ };
 
 # Does fetched instruction require a constant word?
-# MODIFIED: iaddq has an 8-byte immediate operand
 bool need_valC =
-	f_icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IJXX, ICALL, IIADDQ };
+	f_icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IJXX, ICALL };
 
 # Predict next value of PC
 word f_predPC = [
@@ -207,8 +185,8 @@ word f_predPC = [
 
 ################ Decode Stage ######################################
 
+
 ## What register should be used as the A source?
-## iaddq has no rA operand; valC is the immediate instead
 word d_srcA = [
 	D_icode in { IRRMOVQ, IRMMOVQ, IOPQ, IPUSHQ  } : D_rA;
 	D_icode in { IPOPQ, IRET } : RRSP;
@@ -216,17 +194,15 @@ word d_srcA = [
 ];
 
 ## What register should be used as the B source?
-## MODIFIED: iaddq reads rB
 word d_srcB = [
-	D_icode in { IOPQ, IRMMOVQ, IMRMOVQ, IIADDQ } : D_rB;
+	D_icode in { IOPQ, IRMMOVQ, IMRMOVQ  } : D_rB;
 	D_icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
 	1 : RNONE;  # Don't need register
 ];
 
 ## What register should be used as the E destination?
-## MODIFIED: iaddq writes result to rB
 word d_dstE = [
-	D_icode in { IRRMOVQ, IIRMOVQ, IOPQ, IIADDQ } : D_rB;
+	D_icode in { IRRMOVQ, IIRMOVQ, IOPQ} : D_rB;
 	D_icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
 	1 : RNONE;  # Don't write any register
 ];
@@ -261,34 +237,30 @@ word d_valB = [
 ################ Execute Stage #####################################
 
 ## Select input A to ALU
-## MODIFIED: iaddq feeds its immediate (valC) into ALU port A
 word aluA = [
 	E_icode in { IRRMOVQ, IOPQ } : E_valA;
-	E_icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ } : E_valC;
+	E_icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ } : E_valC;
 	E_icode in { ICALL, IPUSHQ } : -8;
 	E_icode in { IRET, IPOPQ } : 8;
 	# Other instructions don't need ALU
 ];
 
 ## Select input B to ALU
-## MODIFIED: iaddq feeds rB's value into ALU port B
 word aluB = [
-	E_icode in { IRMMOVQ, IMRMOVQ, IOPQ, ICALL,
-		     IPUSHQ, IRET, IPOPQ, IIADDQ } : E_valB;
+	E_icode in { IRMMOVQ, IMRMOVQ, IOPQ, ICALL, 
+		     IPUSHQ, IRET, IPOPQ } : E_valB;
 	E_icode in { IRRMOVQ, IIRMOVQ } : 0;
 	# Other instructions don't need ALU
 ];
 
 ## Set the ALU function
-## iaddq always adds; default ALUADD handles it with no change
 word alufun = [
 	E_icode == IOPQ : E_ifun;
 	1 : ALUADD;
 ];
 
 ## Should the condition codes be updated?
-## MODIFIED: iaddq sets condition codes just like OPq
-bool set_cc = E_icode in { IOPQ, IIADDQ } &&
+bool set_cc = E_icode == IOPQ &&
 	# State changes only during normal operation
 	!m_stat in { SADR, SINS, SHLT } && !W_stat in { SADR, SINS, SHLT };
 
