@@ -1,6 +1,7 @@
 ##################################################################
-# ncopy.ys - Y86-64 optimized 8x-unrolled latency-hiding version
-# Copies src to dst, counts positive words, fully Y86-compliant
+# name: Raul-Andrei Pop , ID: raul-andrei.pop
+# optimizations: loop unrolling (chunks of 8 elements, since we "don't know size at compile time")
+# prefetching (loading) elements inside loop to ameliorate dependency
 ##################################################################
 # %rdi = src, %rsi = dst, %rdx = len
 ncopy:

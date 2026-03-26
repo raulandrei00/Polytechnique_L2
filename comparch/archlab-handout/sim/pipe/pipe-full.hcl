@@ -4,7 +4,7 @@
 #    Copyright (C) Randal E. Bryant, David R. O'Hallaron, 2014    #
 ####################################################################
 
-# Name: [Your Name], ID: [Your ID]
+# Name: raul-andrei pop, ID: raul-andrei.pop
 #
 # Modifications (pipe-full.hcl):
 #   Added full pipeline support for the iaddq instruction.
@@ -12,21 +12,7 @@
 #   This acts like an OPq but with an immediate instead of a register
 #   source, saving an irmovq each time a constant is added to a register.
 #
-#   Changes by stage:
-#   Fetch:   IIADDQ added to instr_valid, need_regids, and need_valC.
-#            It uses one register byte (rB only; rA is RNONE) and a
-#            full 8-byte immediate, so it is 10 bytes total.
-#   Decode:  srcB = rB  (register operand to read)
-#            dstE = rB  (register to write result back)
-#            srcA = RNONE (no register source A; immediate used instead)
-#   Execute: aluA = valC  (the immediate is operand A)
-#            aluB = valB  (rB's value is operand B)
-#            alufun = ALUADD (default, no change needed)
-#            set_cc now includes IIADDQ so flags are updated
-#   Memory:  No memory access; no changes required.
-#   Pipeline control: No new hazard cases; existing forwarding and
-#            stall logic handles iaddq correctly because it only
-#            uses srcB/dstE, exactly like the register-B side of OPq.
+
 
 ####################################################################
 #    C Include's.  Don't alter these                               #
