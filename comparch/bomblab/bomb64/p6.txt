@@ -1,0 +1,85 @@
+|B+ 0x4015fe <phase_6>      push   %r14                                                                                       │
+│   0x401600 <phase_6+2>    push   %r13                                                                                       │
+│   0x401602 <phase_6+4>    push   %r12                                                                                       │
+│   0x401604 <phase_6+6>    push   %rbp                                                                                       │
+│   0x401605 <phase_6+7>    push   %rbx                                                                                       │
+│   0x401606 <phase_6+8>    sub    $0x50,%rsp                                                                                 │
+│   0x40160a <phase_6+12>   lea    0x30(%rsp),%rsi                                                                            │
+│   0x40160f <phase_6+17>   call   0x401aa0 <read_six_numbers>                                                                │
+│   0x401614 <phase_6+22>   lea    0x30(%rsp),%r12                                                                            │
+│   0x401619 <phase_6+27>   mov    %r12,%r13                                                                                  │
+│   0x40161c <phase_6+30>   mov    $0x1,%r14d                                                                                 │
+│   0x401622 <phase_6+36>   jmp    0x4016e4 <phase_6+230>                                                                     │
+│   0x401627 <phase_6+41>   call   0x401a6a <explode_bomb>                                                                    │
+│   0x40162c <phase_6+46>   jmp    0x4016f7 <phase_6+249>                                                                     │
+│  >0x401631 <phase_6+51>   add    $0x1,%rbx                                                                                  │
+│   0x401635 <phase_6+55>   cmp    $0x5,%ebx                                                                                  │
+│   0x401638 <phase_6+58>   jg     0x4016dc <phase_6+222>                                                                     │
+│   0x40163e <phase_6+64>   mov    0x30(%rsp,%rbx,4),%eax                                                                     │
+│   0x401642 <phase_6+68>   cmp    %eax,0x0(%rbp)                                                                             │
+│   0x401645 <phase_6+71>   jne    0x401631 <phase_6+51>                                                                      │
+│   0x401647 <phase_6+73>   call   0x401a6a <explode_bomb>                                                                    │
+│   0x40164c <phase_6+78>   jmp    0x401631 <phase_6+51>                                                                      │
+│   0x40164e <phase_6+80>   lea    0x48(%rsp),%rdx                                                                            │
+│   0x401653 <phase_6+85>   mov    $0x7,%ecx                                                                                  │
+│   0x401658 <phase_6+90>   mov    %ecx,%eax                                                                                  │
+│   0x40165a <phase_6+92>   sub    (%r12),%eax                                                                                │
+│   0x40165e <phase_6+96>   mov    %eax,(%r12)                                                                                │
+│   0x401662 <phase_6+100>  add    $0x4,%r12                                                                                  │
+│   0x401666 <phase_6+104>  cmp    %r12,%rdx   
+|   0x401669 <phase_6+107>  jne    0x401658 <phase_6+90>                                                                      │
+│   0x40166b <phase_6+109>  mov    $0x0,%esi                                                                                  │
+│   0x401670 <phase_6+114>  mov    0x30(%rsp,%rsi,4),%ecx                                                                     │
+│   0x401674 <phase_6+118>  mov    $0x1,%eax                                                                                  │
+│   0x401679 <phase_6+123>  mov    $0x4062f0,%edx                                                                             │
+│   0x40167e <phase_6+128>  cmp    $0x1,%ecx                                                                                  │
+│   0x401681 <phase_6+131>  jle    0x40168e <phase_6+144>                                                                     │
+│   0x401683 <phase_6+133>  mov    0x8(%rdx),%rdx                                                                             │
+│   0x401687 <phase_6+137>  add    $0x1,%eax                                                                                  │
+│   0x40168a <phase_6+140>  cmp    %ecx,%eax                                                                                  │
+│   0x40168c <phase_6+142>  jne    0x401683 <phase_6+133>                                                                     │
+│   0x40168e <phase_6+144>  mov    %rdx,(%rsp,%rsi,8)                                                                         │
+│   0x401692 <phase_6+148>  add    $0x1,%rsi                                                                                  │
+│   0x401696 <phase_6+152>  cmp    $0x6,%rsi                                                                                  │
+│   0x40169a <phase_6+156>  jne    0x401670 <phase_6+114>                                                                     │
+│   0x40169c <phase_6+158>  mov    (%rsp),%rbx                                                                                │
+│   0x4016a0 <phase_6+162>  mov    0x8(%rsp),%rax                                                                             │
+│   0x4016a5 <phase_6+167>  mov    %rax,0x8(%rbx)                                                                             │
+│   0x4016a9 <phase_6+171>  mov    0x10(%rsp),%rdx                                                                            │
+│   0x4016ae <phase_6+176>  mov    %rdx,0x8(%rax)                                                                             │
+│   0x4016b2 <phase_6+180>  mov    0x18(%rsp),%rax                                                                            │
+│   0x4016b7 <phase_6+185>  mov    %rax,0x8(%rdx)                                                                             │
+│   0x4016bb <phase_6+189>  mov    0x20(%rsp),%rdx                                                                            │
+│   0x4016c0 <phase_6+194>  mov    %rdx,0x8(%rax)                                                                             │
+│   0x4016c4 <phase_6+198>  mov    0x28(%rsp),%rax                                                                            │
+│   0x4016c9 <phase_6+203>  mov    %rax,0x8(%rdx)                                                                             │
+│   0x4016cd <phase_6+207>  movq   $0x0,0x8(%rax)                                                                             │
+│   0x4016d5 <phase_6+215>  mov    $0x5,%ebp                                                                                  │
+│   0x4016da <phase_6+220>  jmp    0x401712 <phase_6+276>        
+|   0x4016dc <phase_6+222>  add    $0x1,%r14                                                                                  │
+│   0x4016e0 <phase_6+226>  add    $0x4,%r13                                                                                  │
+│   0x4016e4 <phase_6+230>  mov    %r13,%rbp                                                                                  │
+│   0x4016e7 <phase_6+233>  mov    0x0(%r13),%eax                                                                             │
+│   0x4016eb <phase_6+237>  sub    $0x1,%eax                                                                                  │
+│   0x4016ee <phase_6+240>  cmp    $0x5,%eax                                                                                  │
+│   0x4016f1 <phase_6+243>  ja     0x401627 <phase_6+41>                                                                      │
+│   0x4016f7 <phase_6+249>  cmp    $0x5,%r14d                                                                                 │
+│   0x4016fb <phase_6+253>  jg     0x40164e <phase_6+80>                                                                      │
+│   0x401701 <phase_6+259>  mov    %r14,%rbx                                                                                  │
+│   0x401704 <phase_6+262>  jmp    0x40163e <phase_6+64>                                                                      │
+│   0x401709 <phase_6+267>  mov    0x8(%rbx),%rbx                                                                             │
+│   0x40170d <phase_6+271>  sub    $0x1,%ebp                                                                                  │
+│   0x401710 <phase_6+274>  je     0x401723 <phase_6+293>                                                                     │
+│   0x401712 <phase_6+276>  mov    0x8(%rbx),%rax                                                                             │
+│   0x401716 <phase_6+280>  mov    (%rax),%eax                                                                                │
+│   0x401718 <phase_6+282>  cmp    %eax,(%rbx)                                                                                │
+│   0x40171a <phase_6+284>  jge    0x401709 <phase_6+267>                                                                     │
+│   0x40171c <phase_6+286>  call   0x401a6a <explode_bomb>                                                                    │
+│   0x401721 <phase_6+291>  jmp    0x401709 <phase_6+267>                                                                     │
+│   0x401723 <phase_6+293>  add    $0x50,%rsp                                                                                 │
+│   0x401727 <phase_6+297>  pop    %rbx                                                                                       │
+│   0x401728 <phase_6+298>  pop    %rbp                                                                                       │
+│   0x401729 <phase_6+299>  pop    %r12                                                                                       │
+│   0x40172b <phase_6+301>  pop    %r13                                                                                       │
+│   0x40172d <phase_6+303>  pop    %r14                                                                                       │
+│   0x40172f <phase_6+305>  ret                                                                                       │

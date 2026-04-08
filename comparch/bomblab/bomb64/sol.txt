@@ -1,4 +1,7 @@
 Leave the gun, take the cannoli
 1 2 4 8 16 32
-1 ???
+2 -261
+6 21
+bbbboc
+5 6 4 3 2 1
 

@@ -1,0 +1,22 @@
+|   0x401530 <func4>        push   %rbx                                                                                       │
+│   0x401531 <func4+1>      mov    %edx,%eax                                                                                  │
+│   0x401533 <func4+3>      sub    %esi,%eax                                                                                  │
+│   0x401535 <func4+5>      mov    %eax,%ebx                                                                                  │
+│   0x401537 <func4+7>      shr    $0x1f,%ebx                                                                                 │
+│   0x40153a <func4+10>     add    %eax,%ebx                                                                                  │
+│   0x40153c <func4+12>     sar    $1,%ebx                                                                                    │
+│   0x40153e <func4+14>     add    %esi,%ebx                                                                                  │
+│   0x401540 <func4+16>     cmp    %edi,%ebx                                                                                  │
+│   0x401542 <func4+18>     jl     0x40154a <func4+26>                                                                        │
+│   0x401544 <func4+20>     jg     0x401556 <func4+38>                                                                        │
+│   0x401546 <func4+22>     mov    %ebx,%eax                                                                                  │
+│   0x401548 <func4+24>     pop    %rbx                                                                                       │
+│   0x401549 <func4+25>     ret                                                                                               │
+│   0x40154a <func4+26>     lea    0x1(%rbx),%esi                                                                             │
+│   0x40154d <func4+29>     call   0x401530 <func4>                                                                           │
+│   0x401552 <func4+34>     add    %eax,%ebx                                                                                  │
+│   0x401554 <func4+36>     jmp    0x401546 <func4+22>                                                                        │
+│   0x401556 <func4+38>     lea    -0x1(%rbx),%edx                                                                            │
+│   0x401559 <func4+41>     call   0x401530 <func4>                                                                           │
+│   0x40155e <func4+46>     add    %eax,%ebx                                                                                  │
+│   0x401560 <func4+48>     jmp    0x401546 <func4+22>

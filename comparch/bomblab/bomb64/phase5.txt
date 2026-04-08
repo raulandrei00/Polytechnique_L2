@@ -1,0 +1,11 @@
+|   0x4015c7 <phase_5+14>   mov    %rbx,%rax                                                                            │
+│   0x4015ca <phase_5+17>   lea    0x6(%rbx),%rdi                                                                       │
+│   0x4015ce <phase_5+21>   mov    $0x0,%ecx                                                                            │
+│   0x4015d3 <phase_5+26>   movzbl (%rax),%edx                                                                          │
+│   0x4015d6 <phase_5+29>   and    $0xf,%edx                                                                            │
+│   0x4015d9 <phase_5+32>   add    0x403200(,%rdx,4),%ecx                                                               │
+│   0x4015e0 <phase_5+39>   add    $0x1,%rax                                                                            │
+│   0x4015e4 <phase_5+43>   cmp    %rdi,%rax                                                                            │
+│   0x4015e7 <phase_5+46>   jne    0x4015d3 <phase_5+26>                                                                │
+│  >0x4015e9 <phase_5+48>   cmp    $0x26,%ecx                                                                           │
+│   0x4015ec <phase_5+51>   jne    0x4015f7 <phase_5+62>
