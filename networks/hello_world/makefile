@@ -29,4 +29,4 @@ $(INTL_OBJ): international-hello-world.c
 
 # used regex rule to clean all object files generated
 clean:
-	rm -f *hello-world*.o hello-world international-hello-world
+	rm -f *hello-world*.o hello-world international-hello-world fancy-hello-world

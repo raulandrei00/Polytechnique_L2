@@ -1,4 +1,5 @@
 run 
 $make
 to generate all executables
-then, 
+then, to run a specific executable, run
+$./executable_name
