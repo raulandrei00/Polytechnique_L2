@@ -1,0 +1,4 @@
+to unblock port:
+
+lsof -i :5000 (the 5000 is the port number)
+kill -9 <PID> (the PID is the process ID of the process that is using the port)
