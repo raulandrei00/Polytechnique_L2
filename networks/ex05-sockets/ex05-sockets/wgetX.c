@@ -99,6 +99,8 @@ int download_page(url_info *info, http_reply *reply) {
     char port_str[6];
     snprintf(port_str, sizeof(port_str), "%d", info->port);
 
+    // fprintf(stderr, "Resolving host: '%s', port: '%d'\n", info->host, info->port);
+
     int err = getaddrinfo(info->host, port_str, &hints, &res);
     if (err) {
         fprintf(stderr, "getaddrinfo failed: %s\n", gai_strerror(err));
@@ -255,13 +257,46 @@ char *read_http_reply(struct http_reply *reply) {
     double http_version;
     int rv = sscanf(reply->reply_buffer, "HTTP/%lf %d", &http_version, &status);
     if (rv != 2) {
-	fprintf(stderr, "Could not parse http response first line (rv=%d, %s)\n", rv, reply->reply_buffer);
-	return NULL;
+        fprintf(stderr, "Could not parse http response first line (rv=%d, %s)\n", rv, reply->reply_buffer);
+        return NULL;
+    }
+
+    if (status == 301 || status == 302 || status == 303 || status == 307 || status == 308) {
+        // Extract Location header
+        char *buf2 = status_line + 2;
+        int remaining2 = reply->reply_buffer_length - (buf2 - reply->reply_buffer);
+        while (1) {
+            char *line = next_line(buf2, remaining2);
+            if (!line) break;
+            if (strncmp(buf2, "Location: ", 10) == 0) {
+                *line = '\0';
+                char *new_url = buf2 + 10;
+                fprintf(stderr, "Redirecting to: %s\n", new_url);
+
+                // Re-parse and re-download
+                url_info new_info;
+                int ret = parse_url(new_url, &new_info);
+                if (ret) {
+                    fprintf(stderr, "Could not parse redirect URL\n");
+                    return NULL;
+                }
+                free(reply->reply_buffer);
+                reply->reply_buffer = NULL;
+                reply->reply_buffer_length = 0;
+                if (download_page(&new_info, reply) != 0) return NULL;
+                // call read_http_reply recursively to handle multiple redirects
+                return read_http_reply(reply);  
+            }
+            remaining2 -= (line - buf2) + 2;
+            buf2 = line + 2;
+        }
+        fprintf(stderr, "Redirect with no Location header\n");
+        return NULL;
     }
 
     if (status != 200) {
-	fprintf(stderr, "Server returned status %d (should be 200)\n", status);
-	return NULL;
+        fprintf(stderr, "Server returned status %d (should be 200)\n", status);
+        return NULL;
     }
 
     char *buf = status_line + 2;
