@@ -1,9 +1,7 @@
-LANGUAGE=ENGLISH
+LANGUAGE=CHINESE
 
 CC=cc
-CFLAGS=-Wall -g
-
-INTL_OBJ=international-hello-world-$(LANGUAGE).o
+CFLAGS=-Wall -Werror -g
 
 all: hello-world international-hello-world fancy-hello-world
 
@@ -19,14 +17,12 @@ hello-world: hello-world.o
 hello-world.o: hello-world.c
 	$(CC) $(CFLAGS) -c hello-world.c
 
-international-hello-world: $(INTL_OBJ)
-	$(CC) $(CFLAGS) -o international-hello-world $(INTL_OBJ)
+international-hello-world: international-hello-world.o
+	$(CC) $(CFLAGS) -o international-hello-world international-hello-world.o
 
-$(INTL_OBJ): international-hello-world.c
-	$(CC) $(CFLAGS) -c international-hello-world.c -D$(LANGUAGE) -o $(INTL_OBJ)
+international-hello-world.o: international-hello-world.c
+	$(CC) $(CFLAGS) -c international-hello-world.c -D$(LANGUAGE) -o international-hello-world.o
 
-.PHONY: all clean
 
-# used regex rule to clean all object files generated
 clean:
-	rm -f *hello-world*.o hello-world international-hello-world fancy-hello-world
+	rm -f hello-world.o international-hello-world.o fancy-hello-world.o hello-world international-hello-world fancy-hello-world
