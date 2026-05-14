@@ -216,7 +216,10 @@ void write_data(const char *path, const char * data, int len) {
         fprintf(stderr, "fopen() failed: %s\n", strerror(errno));
         return;
     }
-    fwrite(data, 1, len, f);
+    size_t written = fwrite(data, 1, len, f);
+    if (written != (size_t)len) {
+        fprintf(stderr, "fwrite() failed: only wrote %zu of %d bytes\n", written, len);
+    }
     fclose(f);
 }
 
@@ -262,7 +265,7 @@ char *read_http_reply(struct http_reply *reply) {
     }
 
     if (status == 301 || status == 302 || status == 303 || status == 307 || status == 308) {
-        // Extract Location header
+    
         char *buf2 = status_line + 2;
         int remaining2 = reply->reply_buffer_length - (buf2 - reply->reply_buffer);
         while (1) {
@@ -271,11 +274,20 @@ char *read_http_reply(struct http_reply *reply) {
             if (strncmp(buf2, "Location: ", 10) == 0) {
                 *line = '\0';
                 char *new_url = buf2 + 10;
-                fprintf(stderr, "Redirecting to: %s\n", new_url);
 
+                size_t url_len = strlen(new_url);
+                if (url_len > 0 && new_url[url_len - 1] == '\r') {
+                    new_url[url_len - 1] = '\0';
+                }
+                
+                fprintf(stderr, "Redirecting to: %s\n", new_url);
+                
                 // Re-parse and re-download
                 url_info new_info;
-                int ret = parse_url(new_url, &new_info);
+                // fprintf(stderr, "URL length: %zu, last char: %d\n", strlen(new_url), (int)new_url[strlen(new_url)-1]);
+                char *new_url_copy = strdup(new_url);
+                int ret = parse_url(new_url_copy, &new_info);
+
                 if (ret) {
                     fprintf(stderr, "Could not parse redirect URL\n");
                     return NULL;
@@ -325,7 +337,6 @@ char *read_http_reply(struct http_reply *reply) {
         char *line = next_line(buf, remaining);
         if (line == NULL) break;
 
-        // Empty line = "\r\n" alone — signals end of headers
         if (line == buf) {
             buf = line + 2;  // skip past the blank line
             break;
