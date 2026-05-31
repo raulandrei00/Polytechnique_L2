@@ -1,0 +1,414 @@
+\documentclass[11pt]{article}
+
+%==================== PACKAGES ====================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\geometry{a4paper,margin=2.4cm}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black}
+
+%==================== SHORTCUTS ====================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\DeclareMathOperator{\Hf}{H_f}
+\newcommand{\ck}[1]{c_{#1}}
+
+\title{\bfseries Series of functions, Differential equations\\[2pt]
+\large FMA 2S 007 EP}
+\author{Argint Maria-Theodora, Pop Raul, Spineanu Rares}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-2.2em}
+
+\noindent\textit{Throughout, for a $T$-periodic piecewise continuous function $h$ the $k$-th Fourier
+coefficient is}
+\[
+\ck{k}(h)=\frac1T\int_0^T h(x)\,e^{-2\pi i k (x/T)}\dd x ,
+\qquad k\in\Z .
+\]
+\textit{Throughout this work, we use the following results from Chapter 2 of the textbook: \\ the one-period identity $\int_a^{a+T}h=\int_0^T h$
+\emph{(eq.~(2.2.4))}, \\ Bessel's inequality \emph{(Cor.~2.7.5)}, Parseval's equality
+\emph{(Thm.~2.7.6)}, \\ the criterion which states that ``If a function $f$ has its Fourier coefficients $(c_k) \in l^1(\mathbb{Z})$ then $f_N(x) = \sum_{k=-N}^{k=N} c_k e^{2 \pi i k (x/T)}$ converges uniformly to a function $f = \sum_{k \in \mathbb{Z}} c_k e^{2 \pi i k (x/T)}$, which is continuous and $T$-periodic.'' \emph{(Prop.~2.4.1)},\\ and the uniqueness of Fourier coefficients
+\emph{(Thm.~2.6.1, Cor.~2.6.2)}.}
+
+%======================================================================
+\section*{Exercise 1}
+%======================================================================
+
+Let $\alpha\in(0,1]$. We say that a function $f:\R\to\C$ is \emph{$\alpha$-H\"older} if there exists
+a constant $\Hf\ge 0$ such that
+\[
+\forall (x,y)\in\R^2,\qquad \abs{f(x)-f(y)}\le \Hf\,\abs{x-y}^{\alpha}.
+\]
+
+\medskip
+\noindent\textbf{1)} Give an example of a $1$-periodic function which is $(1/2)$-H\"older but not
+$1$-H\"older.
+
+\begin{proof}
+We claim that $f(x)=\sqrt{\abs{\sin(\pi x)}}$ has the above property.
+
+\smallskip
+\emph{Periodicity.} Notice that
+\\$\sqrt{\abs{\sin(\pi(x+1))}}=\sqrt{\abs{-\sin(\pi x)}}=\sqrt{\abs{\sin(\pi x)}}$
+That is, $f(x) = f(x+1)$, meaning the function
+$f$ is $1$-periodic.
+
+\smallskip
+\emph{$(1/2)$-H\"older.} We will use the following inequality:
+\begin{equation}\label{eq:sqrt}
+\abs{\sqrt a-\sqrt b}\le \sqrt{\abs{a-b}}\qquad(a,b\ge 0),
+\end{equation}
+which follows from 
+\\$(\sqrt a-\sqrt b)^2=a+b-2\sqrt{ab}\le a+b-2\min(a,b)=\abs{a-b}$.
+% Applying \eqref{eq:sqrt} with $a=\abs{\sin\pi x}$, $b=\abs{\sin\pi y}$, then using
+% $\big|\abs{\sin\pi x}-\abs{\sin\pi y}\big|\le\abs{\sin\pi x-\sin\pi y}\le\pi\abs{x-y}$
+% (the map $x\mapsto\sin\pi x$ is $\pi$-Lipschitz, by the mean value theorem), we get
+% \[
+% \abs{f(x)-f(y)}
+% \le \sqrt{\big|\abs{\sin\pi x}-\abs{\sin\pi y}\big|}
+% \le \sqrt{\pi\,\abs{x-y}}
+% =\sqrt{\pi}\,\abs{x-y}^{1/2}.
+% \]
+\\ For any $x, y \in \mathbb{R}$, applying \eqref{eq:sqrt} with
+$a = \abs{\sin \pi x}$ and $b = \abs{\sin \pi y}$ yields
+\[
+  \abs{f(x) - f(y)}
+  \;\le\; \sqrt{\,\bigl\lvert \abs{\sin \pi x} - \abs{\sin \pi y} \bigr\rvert\,}
+  \;\le\; \sqrt{\,\abs{\sin \pi x - \sin \pi y}\,},
+\]
+
+By the mean value theorem applied to $t \mapsto \sin(\pi t)$, there exists
+$c \in \bigl[\min(x,y),\, \max(x,y)\bigr]$ such that
+\[
+  \frac{\sin \pi x - \sin \pi y}{x - y} = \bigl(\sin \pi c\bigr)' = \pi \cos(\pi c).
+\]
+Since $\abs{\cos(\pi c)} \le 1$, this gives
+\[
+  \abs{\sin \pi x - \sin \pi y} \;\le\; \pi\,\abs{x - y}.
+\]
+
+Finally, by monotonicity of the square root, we obtain
+\[
+  \boxed{\;\abs{f(x) - f(y)} \;\le\; \sqrt{\pi}\,\abs{x - y}^{1/2}.\;}
+\]
+Hence $f$ is $(1/2)$-H\"older with $\Hf=\sqrt\pi$.
+
+\smallskip
+\emph{Not $1$-H\"older.} Suppose, for contradiction, that $f$ were $1$-H\"older: there would exist
+$\Hf\ge0$ such that $\abs{f(x)-f(y)}\le\Hf\abs{x-y}$ for all $x,y\in\R$. Taking $y=0$ and noting
+$f(0)=\sqrt{\abs{\sin 0}}=0$, this would force
+\[
+\frac{\abs{f(x)-f(0)}}{\abs{x-0}}=\frac{\sqrt{\abs{\sin\pi x}}}{\abs x}\le\Hf
+\qquad\text{for every }x\ne0 .
+\]
+But, writing
+\[
+\frac{\sqrt{\abs{\sin\pi x}}}{\abs x}
+=\sqrt{\frac{\abs{\sin\pi x}}{\pi\abs x}\cdot\frac{\pi}{\abs x}}
+\]
+and using $\dfrac{\abs{\sin\pi x}}{\pi\abs x}\to1$ while $\dfrac{\pi}{\abs x}\to+\infty$ as $x\to0$,
+\[
+\frac{\abs{f(x)-f(0)}}{\abs{x-0}}=\frac{\sqrt{\abs{\sin\pi x}}}{\abs x}\;\xrightarrow[x\to0]{}\;+\infty ,
+\]
+which contradicts the bound $\le\Hf$. Hence $f$ is not $1$-H\"older.
+\end{proof}
+
+\medskip
+\noindent\emph{From now on $f$ is a fixed $1$-periodic $\alpha$-H\"older function (so $T=1$), and for
+$t\in\R$ we set $g_t:\R\ni x\mapsto f(x-t)-f(x)\in\C$.}
+
+\bigskip
+\noindent\textbf{2.a)} Show that $g_t$ is a continuous $1$-periodic function that satisfies
+$\displaystyle\sup_{x\in\R}\abs{g_t(x)}\le \Hf\abs t^{\alpha}$.
+
+\begin{proof}
+Being $\alpha$-H\"older, $f$ is uniformly continuous, hence so is $g_t$ as a sum of uniformly continuous functions.
+\\ Notice that, since $f$ is 1-periodic,
+\[
+g_t(x+1)=f(x+1-t)-f(x+1)=f(x-t)-f(x)=g_t(x),
+\]
+Hence, $g_t$ is 1-periodic.
+\\Finally, using the H\"older property of $f$, for every $x$,
+\[
+\abs{g_t(x)}=\abs{f(x-t)-f(x)}\le \Hf\,\abs{(x-t)-x}^{\alpha}=\Hf\abs t^{\alpha},
+\]
+so $\displaystyle\sup_{x\in\R}\abs{g_t(x)}\le \Hf\abs t^{\alpha}$.
+\end{proof}
+
+\bigskip
+\noindent\textbf{2.b)} Compute the Fourier coefficients of $g_t$.
+
+\begin{proof}
+Recall that, since $g_t$ and $f$ are $1$-periodic (here $T=1$), their Fourier coefficients are by
+definition
+\[
+\ck{k}(g_t)=\int_0^1 g_t(x)\,e^{-2\pi i k x}\dd x,
+\qquad
+\ck{k}(f)=\int_0^1 f(x)\,e^{-2\pi i k x}\dd x .
+\]
+Substituting the definition $g_t(x)=f(x-t)-f(x)$ and splitting the integral by linearity,
+\[
+\ck{k}(g_t)
+=\int_0^1\bigl(f(x-t)-f(x)\bigr)e^{-2\pi i k x}\dd x
+=\underbrace{\int_0^1 f(x-t)\,e^{-2\pi i k x}\dd x}_{=:I}
+-\underbrace{\int_0^1 f(x)\,e^{-2\pi i k x}\dd x}_{=\,\ck{k}(f)} .
+\]
+It remains to evaluate $I$. Using the change of variable $u=x-t$,  $\dd u=\dd x$ and the bounds $x=0,1$ become
+$u=-t,\,1-t$:
+\[
+I=\int_{-t}^{1-t} f(u)\,e^{-2\pi i k(u+t)}\dd u
+=e^{-2\pi i k t}\int_{-t}^{1-t} f(u)\,e^{-2\pi i k u}\dd u ,
+\]
+where the factor $e^{-2\pi i k t}$ is constant in $u$ and the map
+$u\mapsto f(u)\,e^{-2\pi i k u}$ is $1$-periodic (as a product of the $1$-periodic $f$ and the
+$1$-periodic $u\mapsto e^{-2\pi i k u}$), so by the one-period identity~(2.2.4) its integral over the
+interval $[-t,1-t]$ of length $1$ equals its integral over $[0,1]$. Hence,
+\[
+I = e^{-2\pi i k t}\int_{-t}^{1-t} f(u)\,e^{-2\pi i k u}\dd u=e^{-2\pi i k t} \int_{0}^{1} f(u)\,e^{-2\pi i k u}\dd u= e^{-2\pi i k t} \ck{k}(f).
+\]
+Hence $I=e^{-2\pi i k t}\,\ck{k}(f)$, and therefore
+\[
+\ck{k}(g_t)=I-\ck{k}(f)=e^{-2\pi i k t}\,\ck{k}(f)-\ck{k}(f)=\bigl(e^{-2\pi i k t}-1\bigr)\ck{k}(f). \qedhere
+\]
+\end{proof}
+
+\bigskip
+\noindent\textbf{2.c)} Show that $\bigl|\ck{k}\!\left(g_{1/(2k)}\right)\bigr|=2\,\abs{\ck{k}(f)}$.
+
+\begin{proof}
+Take $t=\tfrac1{2k}$ in the formula of 2.b. Then $e^{-2\pi i k\cdot \frac1{2k}}=e^{-i\pi}=-1$, so
+\[
+\ck{k}\!\left(g_{1/(2k)}\right)=\bigl(e^{-i\pi}-1\bigr)\,\ck{k}(f)=(-1-1)\,\ck{k}(f)=-2\,\ck{k}(f),
+\]
+By taking the modulus on both sides, $\bigl|\ck{k}\!\left(g_{1/(2k)}\right)\bigr|=2\,\abs{\ck{k}(f)}$.
+\end{proof}
+
+\bigskip
+\noindent\textbf{3)} Prove that there exists $C_\alpha>0$ such that
+$\displaystyle\forall k\in\Z^{*},\ \abs{\ck{k}(f)}\le C_\alpha\,\Hf\,\abs k^{-\alpha}$.
+
+\begin{proof}
+By 2.c, taking moduli in $\ck{k}\!\left(g_{1/(2k)}\right)=-2\,\ck{k}(f)$ gives
+\[
+\abs{\ck{k}(f)}=\tfrac12\bigl|\ck{k}\!\left(g_{1/(2k)}\right)\bigr| .
+\]
+Now, we write out the coefficient $\ck{k}\!\left(g_{1/(2k)}\right)$ from its definition, and then
+estimate. By definition,
+\[
+\ck{k}\!\left(g_{1/(2k)}\right)=\int_0^1 g_{1/(2k)}(x)\,e^{-2\pi i k x}\dd x .
+\]
+Hence, taking the modulus inside the integral and using $\bigl|e^{-2\pi i k x}\bigr|=1$,
+\[
+\bigl|\ck{k}\!\left(g_{1/(2k)}\right)\bigr|
+=\left|\int_0^1 g_{1/(2k)}(x)\,e^{-2\pi i k x}\dd x\right|
+\le \int_0^1\bigl|g_{1/(2k)}(x)\bigr|\,\bigl|e^{-2\pi i k x}\bigr|\dd x
+=\int_0^1\bigl|g_{1/(2k)}(x)\bigr|\dd x .
+\]
+Bounding the integrand by its supremum and applying 2.a with $t=\tfrac1{2k}$,
+\[
+\int_0^1\bigl|g_{1/(2k)}(x)\bigr|\dd x
+\le \sup_{x\in\R}\bigl|g_{1/(2k)}(x)\bigr|
+\overset{\text{2.a}}{\le} \Hf\,\Bigl(\tfrac1{2\abs k}\Bigr)^{\alpha}.
+\]
+Combining the three displays,
+\[
+\abs{\ck{k}(f)}=\tfrac12\bigl|\ck{k}\!\left(g_{1/(2k)}\right)\bigr|
+\le\frac12\,\Hf\,\Bigl(\frac1{2\abs k}\Bigr)^{\alpha}
+=2^{-(\alpha+1)}\,\Hf\,\abs k^{-\alpha},
+\]
+so the statement holds with $C_\alpha=2^{-(\alpha+1)}$.
+\end{proof}
+
+\medskip
+\noindent\emph{For the remaining parts, fix $n\in\N$ and put $t_n=(3\cdot 2^{n})^{-1}$.}
+
+\bigskip
+\noindent\textbf{4.a)} Explain why
+$\displaystyle\sum_{2^{n}\le k<2^{n+1}}\bigl|\ck{k}(g_{t_n})\bigr|^{2}\le\int_0^1\bigl|g_{t_n}(x)\bigr|^{2}\dd x$.
+
+\begin{proof}
+$g_{t_n}$ is continuous and $1$-periodic (by 2.a), so Parseval's equality (Thm.~2.7.6) gives
+\[
+\int_0^1\bigl|g_{t_n}(x)\bigr|^2\dd x=\sum_{k\in\Z}\bigl|\ck{k}(g_{t_n})\bigr|^{2}.
+\]
+The sum on the left of the statement runs over the \emph{subset} $\{2^{n}\le k<2^{n+1}\}$ of $\Z$,
+and all terms are $\ge0$; therefore it is bounded by the total sum, which equals
+$\int_0^1\abs{g_{t_n}}^2$. (Equivalently, this is Bessel's inequality, Cor.~2.7.5.)
+\end{proof}
+
+\bigskip
+\noindent\textbf{4.b)} Deduce that
+$\displaystyle\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}^{2}\le 3^{-1}\Bigl(\frac1{3\cdot2^{n}}\Bigr)^{2\alpha}\Hf^{2}$.
+\\[2pt]
+\emph{[One can prove and use that for any $k\in[2^{n},2^{n+1})$ one has
+$\abs{e^{-2\pi i k t_n}-1}\ge\sqrt3$.]}
+
+\begin{proof}
+\emph{The bracketed inequality.} For any real $\theta$,
+$\abs{e^{-i\theta}-1}^2=(\cos\theta-1)^2+\sin^2\theta=2-2\cos\theta=4\sin^2(\theta/2)$, so
+$\abs{e^{-i\theta}-1}=2\abs{\sin(\theta/2)}$. Take $\theta=2\pi k t_n=\dfrac{2\pi}{3}\cdot\dfrac{k}{2^{n}}$.
+If $2^{n}\le k<2^{n+1}$ then $\dfrac{k}{2^{n}}\in[1,2)$, hence
+$\theta\in\bigl[\tfrac{2\pi}{3},\tfrac{4\pi}{3}\bigr)$ and $\dfrac\theta2\in\bigl[\tfrac{\pi}{3},\tfrac{2\pi}{3}\bigr)$.
+On this interval $\sin$ increases on $[\pi/3,\pi/2]$ and decreases on $[\pi/2,2\pi/3]$, with equal
+endpoint values $\sin(\pi/3)=\sin(2\pi/3)=\tfrac{\sqrt3}{2}$; hence $\sin(\theta/2)\ge\tfrac{\sqrt3}{2}$ and
+\[
+\abs{e^{-2\pi i k t_n}-1}=2\sin(\theta/2)\ge\sqrt3
+\qquad(2^{n}\le k<2^{n+1}).
+\]
+(For $-2^{n+1}<k\le -2^{n}$ one has $\theta/2\in(-\tfrac{2\pi}{3},-\tfrac\pi3]$, where
+$\abs{\sin(\theta/2)}\ge\tfrac{\sqrt3}{2}$ as well, so the same bound holds.)
+
+\smallskip
+\emph{The estimate.} By 2.b, $\abs{\ck{k}(g_{t_n})}^2=\abs{e^{-2\pi i k t_n}-1}^2\abs{\ck{k}(f)}^2\ge 3\,\abs{\ck{k}(f)}^2$
+on the block, i.e.\ $\abs{\ck{k}(f)}^2\le\tfrac13\abs{\ck{k}(g_{t_n})}^2$. Summing and using 4.a, then 2.a,
+\[
+\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}^{2}
+\le\frac13\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(g_{t_n})}^{2}
+\le\frac13\int_0^1\abs{g_{t_n}(x)}^2\dd x
+\le\frac13\Bigl(\sup_x\abs{g_{t_n}}\Bigr)^{2}
+\le\frac13\,\Hf^{2}\,t_n^{2\alpha},
+\]
+which is exactly $3^{-1}\bigl(\tfrac1{3\cdot2^{n}}\bigr)^{2\alpha}\Hf^{2}$.
+\end{proof}
+
+\bigskip
+\noindent\textbf{4.c)} Deduce that there exists a constant $C'_\alpha$ such that
+$\displaystyle\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}\le C'_\alpha\,\Hf\,2^{\bigl(\frac12-\alpha\bigr)n}$.
+
+\begin{proof}
+The block $\{k:\,2^{n}\le k<2^{n+1}\}$ contains exactly $2^{n+1}-2^n=2^{n}$ integers. By
+Cauchy--Schwarz,
+\[
+\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}
+=\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}\cdot 1
+\le\Bigl(\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}^{2}\Bigr)^{1/2}
+\Bigl(\sum_{2^{n}\le k<2^{n+1}}1^{2}\Bigr)^{1/2}.
+\]
+The second factor is $\bigl(2^{n}\bigr)^{1/2}=2^{n/2}$. By inserting the bound of 4.b for the first factor, we get:
+\[
+\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}
+\le 2^{n/2}\Bigl(3^{-1}\bigl(3\cdot2^{n}\bigr)^{-2\alpha}\Hf^{2}\Bigr)^{1/2}
+=2^{n/2}\cdot 3^{-1/2}\,3^{-\alpha}\,2^{-\alpha n}\,\Hf
+=3^{-(\alpha+\frac12)}\,\Hf\,2^{\bigl(\frac12-\alpha\bigr)n},
+\]
+so the statement holds with $C'_\alpha=3^{-(\alpha+1/2)}$.
+\end{proof}
+
+\bigskip
+\noindent\textbf{4.d)} Prove that if $\alpha\in(1/2,1]$, the Fourier series of $f$ converges normally
+to $f$.
+
+\begin{proof}
+\emph{Summability of the coefficients.} Decompose $\Z^{*}$ into dyadic blocks. For the positive
+indices,
+\[
+\sum_{k\ge1}\abs{\ck{k}(f)}
+=\sum_{n=0}^{\infty}\;\sum_{2^{n}\le k<2^{n+1}}\abs{\ck{k}(f)}
+\overset{\text{4.c}}{\le}\sum_{n=0}^{\infty}C'_\alpha\,\Hf\,2^{\bigl(\frac12-\alpha\bigr)n}
+=C'_\alpha\,\Hf\sum_{n=0}^{\infty}\Bigl(2^{\frac12-\alpha}\Bigr)^{n}.
+\]
+Since $\alpha>\tfrac12$ we have $\tfrac12-\alpha<0$, so $2^{\frac12-\alpha}<1$ and the geometric
+series converges:
+\[
+\sum_{k\ge1}\abs{\ck{k}(f)}\le \frac{C'_\alpha\,\Hf}{1-2^{\frac12-\alpha}}<\infty .
+\]
+Using the negative-index blocks $\{-2^{n+1}<k\le-2^{n}\}$ together with the second case of the
+bracketed inequality in 4.b, the estimates of 4.b and 4.c hold verbatim there, hence
+$\sum_{k\le-1}\abs{\ck{k}(f)}<\infty$ as well. Adding the (finite) term $\abs{\ck{0}(f)}$,
+\[
+\sum_{k\in\Z}\abs{\ck{k}(f)}<\infty,\qquad\text{i.e. }\;(\ck{k}(f))_{k\in\Z}\in\ell^1(\Z).
+\]
+
+\emph{Convergence and identification of the limit.} By Proposition~2.4.1, the series
+$\sum_{k\in\Z}\ck{k}(f)\,e^{2\pi i k x}$ converges \emph{normally} (and uniformly) to a continuous
+$1$-periodic function $g$, whose Fourier coefficients are $\ck{k}(g)=\ck{k}(f)$ for all $k$.
+The function $f-g$ is continuous, $1$-periodic and has all Fourier coefficients equal to $0$; by the
+uniqueness theorem (Thm.~2.6.1 / Cor.~2.6.2) it is identically zero. Therefore $g=f$, i.e.
+\[
+f(x)=\sum_{k\in\Z}\ck{k}(f)\,e^{2\pi i k x}\qquad\text{normally on }\R. \qedhere
+\]
+\end{proof}
+
+%======================================================================
+\section*{Exercise 2}
+%======================================================================
+
+Let $\alpha\in\R\setminus\Z$ and
+\[
+f_\alpha:[0,2\pi]\ni x\longmapsto \frac{\pi}{\sin(\pi\alpha)}\,e^{i(\pi-x)\alpha}\in\C .
+\]
+We denote by $\tilde f_\alpha$ the $2\pi$-periodization of $f_\alpha$ (so here $T=2\pi$). Since
+$f_\alpha$ is $C^\infty$ on $[0,2\pi]$, $\tilde f_\alpha$ is piecewise continuous (with at worst a jump
+at the points $2\pi\Z$), so the Fourier theory of Chapter~2 applies.
+
+\bigskip
+\noindent\textbf{1)} Compute the Fourier coefficients of $\tilde f_\alpha$.
+
+\begin{proof}
+With $T=2\pi$, the definition of the Fourier coefficients is:
+$\ck{k}(\tilde f_\alpha)=\dfrac1{2\pi}\displaystyle\int_0^{2\pi}f_\alpha(x)\,e^{-ikx}\dd x$. Thus:
+
+\[ c_n(\tilde{f}_\alpha) = \frac{1}{2\pi} \int_0^{2\pi} f_\alpha(x) e^{-inx} dx = \frac{1}{2\pi} \cdot \frac{\pi}{\sin(\pi\alpha)} \cdot e^{i\pi\alpha} \int_0^{2\pi} e^{-ix(n+\alpha)} dx \]
+\[ c_n(\tilde{f}_\alpha) = \frac{e^{i\pi\alpha}}{2\sin(\pi\alpha)} \int_0^{2\pi} e^{-i(n+\alpha)x} dx \]
+
+\vspace{0.2cm}
+\noindent Now, we compute the integral $\int_0^{2\pi} e^{-i(n+\alpha)x} dx$
+
+\[ \alpha \notin \mathbb{Z} \implies \alpha + n \neq 0 \quad \forall n \in \mathbb{Z} \]
+
+\begin{align*}
+\int_0^{2\pi} e^{-i(n+\alpha)x} dx &= \left[ \frac{e^{-i(n+\alpha)x}}{-i(n+\alpha)} \right]_0^{2\pi} = \frac{e^{-i(n+\alpha)2\pi} - 1}{-i(\alpha+n)} = \\[10pt]
+&= \frac{e^{-2\pi in} e^{-2\pi i\alpha} - 1}{-i(\alpha+n)} = \frac{e^{-2\pi i\alpha} - 1}{-i(\alpha+n)} = \frac{e^{-i\pi\alpha}(e^{-i\pi\alpha} - e^{i\pi\alpha})}{-i(\alpha+n)} = \\[10pt]
+&= \frac{e^{-i\pi\alpha}}{-i(\alpha+n)} [-2i\sin(\pi\alpha)] = \frac{2 e^{-i\pi\alpha} \sin(\pi\alpha)}{\alpha+n}
+\end{align*}
+
+\vspace{0.2cm}
+\noindent Hence, we get:
+\[ c_n(\tilde{f}_\alpha) = \frac{e^{i\pi\alpha}}{2\sin(\pi\alpha)} \cdot \frac{2\sin(\pi\alpha) \cdot e^{-i\pi\alpha}}{\alpha+n} = \frac{1}{\alpha+n} \]
+
+\[ \boxed{ c_n(\tilde{f}_\alpha) = \frac{1}{\alpha+n} } \]
+
+\end{proof}
+
+\bigskip
+\noindent\textbf{2)} Show that
+$\displaystyle\sum_{k\in\Z}\frac{1}{(k+\alpha)^{2}}=\frac{\pi^{2}}{(\sin(\pi\alpha))^{2}}$.
+
+\begin{proof}
+\noindent $f_\alpha$ is continuous on $[0,2\pi]$ since it is a composition of continuous functions
+
+\[ \alpha \notin \mathbb{Z} \implies \sin(\pi\alpha) \neq 0 \]
+
+\noindent Therefore, $\tilde{f}_\alpha$ is piecewise continuous on $\mathbb{R}$ \\
+Hence, 
+\[ \tilde{f}_\alpha \in L^2([0,2\pi]) \]
+
+\noindent We can use Parseval's identity:
+\[ \sum_{n \in \mathbb{Z}} |c_n(\tilde{f}_\alpha)|^2 = \frac{1}{2\pi} \int_0^{2\pi} |\tilde{f}_\alpha(x)|^2 dx \]
+
+\noindent From 1) :
+\[ \sum_{n \in \mathbb{Z}} |c_n(\tilde{f}_\alpha)|^2 = \sum_{n \in \mathbb{Z}} \frac{1}{(n+\alpha)^2} \]
+
+\begin{align*}
+\frac{1}{2\pi} \int_0^{2\pi} |\tilde{f}_\alpha(x)|^2 dx &= \frac{1}{2\pi} \int_0^{2\pi} \left| \frac{\pi}{\sin(\pi\alpha)} e^{i(\pi-x)\alpha} \right|^2 dx = \\[10pt]
+&= \frac{1}{2\pi} \cdot \frac{\pi^2}{\sin^2(\pi\alpha)} \int_0^{2\pi} \left| e^{i(\pi-x)\alpha} \right|^2 dx
+\end{align*}
+
+\[ (\pi-x)\alpha \in \mathbb{R} \implies \left| e^{i(\pi-x)\alpha} \right| = 1 \]
+
+\noindent Hence, we get :
+\[ \frac{1}{2\pi} \cdot \frac{\pi^2}{\sin^2(\pi\alpha)} \int_0^{2\pi} 1 dx = \frac{1}{2\pi} \cdot \frac{\pi^2}{\sin^2(\pi\alpha)} \cdot 2\pi = \frac{\pi^2}{\sin^2(\pi\alpha)} .\]
+\end{proof}
+
+\end{document}
